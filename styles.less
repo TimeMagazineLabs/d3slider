@@ -1,0 +1,70 @@
+.time-interactive {
+	
+	#control-panel {
+
+		position: relative;
+		> div {
+			float: right;	
+		}
+		.playbtn {
+	 	   	width: 50px;
+	    	cursor: pointer;
+	    	position: absolute;
+			margin: 8px;
+		}
+	}
+	
+	}
+	.slider-axis {		
+		font-size: 14px;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		user-select: none;
+
+		line,path {
+			stroke: #777;
+			fill: none;
+		}
+
+		.domain {
+		  stroke-width: 2px;
+		}
+
+		.thumb path {
+			fill:   #8a0302;
+			stroke: #8a0302;
+			stroke-width: 2px;
+		}
+
+		.tick {
+			font-size: 15px;
+
+		}
+		.tick:hover{
+			font-size: 16px;
+			cursor: pointer;
+		}
+	}
+	
+	#thumb-text {
+		fill: #D7504F;
+	}
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+
+	text.label {
+		fill: #fff;
+	}
+
+	.line {
+	  fill: none;
+	  stroke: steelblue;
+	  stroke-width: 3px;
+	}
+
+	@media (max-width: 500px) {
+	}
+}

@@ -1,0 +1,21 @@
+{
+    "name": "chart",
+    "version": "0.0.1",
+    "description": "Wrapper for D3 slider axis",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TimeMagazine/d3slider.git"
+    },
+    "dependencies": {
+        "browserify": ">= 2.0.0"
+    },
+    "author": {
+        "name" : "Dave Johnson",
+        "email" : "david.johnson@time.com"
+    },
+    "browserify": {
+        "transform": ["node-lessify"]
+    },
+    "scripts" : {}
+}
