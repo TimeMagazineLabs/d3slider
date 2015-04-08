@@ -1,5 +1,5 @@
 ;(function(d3) {
-	
+
 	// allow for use in Node/browserify or not
 	if (typeof module !== "undefined") {
 		var d3 = require("d3");
@@ -8,28 +8,28 @@
 	}
 	
 	var slider = function(container, opts) {
-		
 		// SETUP
+		if (!container) {
+			console.log("You must supply slider a container as the first argument");
+			return null;
+		}
+
 		opts = opts || {};
 		container = container || "body";
 		container = typeof container === "string" ? d3.select(container) : container;
+													// Acccomodate play button width
+		var margin = opts.margin || {top: 20, right: opts.playBtn ? 70 : 30, bottom: 30, left: 30};
 
-		var margin = opts.margin || {top: 20, right: 50, bottom: 30, left: 30};
-
-		var width = opts.width || parseInt(container.style('width'), 10),
+		var width = opts.width || parseInt(container.style('width'),10),
 			height = opts.height || 60,
-			original_width = width, // for scaling + resizing
-			backdrop;  
+			backdrop;
+
+		var uid = s5(); // needed for namespacing the resize event
 		
 		opts.domain = (opts.domain ? opts.domain : [0, 1]);
-		
 
 		if (opts.playBtn){ 
-			// Accommodate play button width
-			// width = width - 50 
-
 			var controls = container.append("div").attr("id","control-panel")
-
 			controls.append("img")
 				.attr("id", "playbtn")
 				.attr("class", "playbtn")
@@ -37,44 +37,39 @@
 		};
 
 		var svg = container.append('svg')
-	    	.attr('width', width)
-	    	.attr('height', height + margin.top + margin.bottom)
-			.append('g')
-	    	// .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+			.attr('width', width)
+			.attr('height', height + margin.top + margin.bottom)
 
 		var axis = svg.append("g").attr("class", "slider-axis");
 
 		var xScale = d3.scale.linear()
 			.domain(opts.domain)
 
-		
-
 		// Make adjustments to range and position of axis if play button
+		xScale.range([0, width - margin.right  - margin.left])
 		if (opts.playBtn){
-			xScale.range([0, width -100])
-			axis.attr("transform", "translate(85," + 45 + ")");
+			axis.attr("transform", "translate(65," + 40 + ")");
 		} else {
-			xScale.range([0, width - margin.right - margin.left])
 			axis.attr("transform", "translate(25," + 45 + ")");
 		}
 
 		var x = d3.svg.axis()
 			.scale(xScale)
-			// .tickValues(d3.range(years.length))
+			x.ticks(width < 500 ? 5 : 10)
 			.orient('top')
-			// .tickFormat(function(d) { return years[d]; }); //d3.format(".0f"))
+			.tickFormat(function(d) { return d; })
 
 		axis.call(x)
 
 		if (opts.label) {
 			var label = axis_g.append("text")
-			    .attr("transform", "translate(" + (opts.label_offset || 0) + ",0)rotate(-90)")
-			    .attr("x", 0)
-			    .attr("y", 5)
-			    .attr("dy", ".71em")
-			    .style("text-anchor", "end")
-			    .attr("class", "axis_label")
-			    .text(opts.label);
+				.attr("transform", "translate(" + (opts.label_offset || 0) + ",0)rotate(-90)")
+				.attr("x", 0)
+				.attr("y", 5)
+				.attr("dy", ".71em")
+				.style("text-anchor", "end")
+				.attr("class", "axis_label")
+				.text(opts.label);
 		}
 
 		function clickedOrDragged(d) {
@@ -104,48 +99,60 @@
 			.attr("d", "M0,6l6,10h-12l6,-11")
 
 		if (opts.thumbText){
-			
-			thumb.append("text")			
+			thumb.append("text")	
 				.attr("id", "thumb-text")
 				.attr("transform", "translate(0,32)")
+				.text(opts.thumbText)
 				.style("text-anchor", "middle")
 				.style("font-size", "14px");
 		}
+		
+		function resize() { 
+			width = parseInt(container.style("width"), 10);
 
-		function resize_chart() {
-			var w = parseInt(container.style('width'), 10) - margin.right - margin.left,
-				h = parseInt(container.style('height'), 10) - margin.top - margin.bottom,
-				z = w / original_width;
+			// Update scale
+			xScale.range([0, width - margin.right - margin.left]);
+			thumb.attr("transform", "translate(" + x.scale().range()[1] + ",0)")
+			x.scale(xScale)
+			axis.call(x)
 
-			width = w;
-			height = h;
+			x.ticks(width < 500 ? 5 : 10)
 
-			//resize_layer.attr("transform", "scale(" + z + ",1)");
+			svg
+				.attr("width",  width)
 
-			axes.forEach(function(obj) {
-				obj.resize(w, h, z);
-			});
-
-			if (opts.resize) {
-				opts.resize(w, h, z);
-			}
-
-			if (backdrop) {
-				drawBackdrop(backdrop[0]);
+			// optional callback
+			if (opts.onResize) {
+				opts.onResize(width)//, height);
 			}
 		}
+
+		var resizeTimer;
+
+		// http://stackoverflow.com/questions/3339825/what-is-the-best-practise-to-not-to-override-other-bound-functions-to-window-onr
+		function addResizeEvent(func, dur) {
+			var resizeTimer;
+
+			d3.select(window).on("resize." + uid, function() {
+				clearTimeout(resizeTimer);
+
+				if (typeof oldResize === 'function') {
+					oldResize();
+				}
+
+				resizeTimer = setTimeout(function() {
+					func();
+				}, dur || 250);
+			});
+		}
+		addResizeEvent(resize, 250);
 		
 		return {
 			axis: axis,
 			scale: xScale,
-			// resize_layer: resize_layer,
 			height: height,
-			width: width,
-			setResize: function(rf) {
-				opts.resize = rf;
-			}
+			width: width
 		}
-		
 	}
 
 	// make this compatible with browserify without requiring it
@@ -155,22 +162,9 @@
 		window.d3chart = slider;
 	}
 
-	// // http://stackoverflow.com/questions/3339825/what-is-the-best-practise-to-not-to-override-other-bound-functions-to-window-onr
-	// function addResizeEvent(func, dur) {
-	// 	var resizeTimer,
-	//     	oldResize = window.onresize;
-	    	
-	//     window.onresize = function () {
-	// 		clearTimeout(resizeTimer);
-	//         if (typeof oldResize === 'function') {
-	//             oldResize();
-	//         }
-
-	// 		resizeTimer = setTimeout(function() {
-	// 			func();
-	// 		}, dur || 250);
-	//     };
-	// }
-
-
+	function s5() {
+		return Math.floor((1 + Math.random()) * 0x100000)
+			.toString(16)
+			.substring(1);
+	}
 }());
