@@ -1,5 +1,5 @@
 {
-    "name": "chart",
+    "name": "d3slider",
     "version": "0.0.1",
     "description": "Wrapper for D3 slider axis",
     "main": "index.js",
