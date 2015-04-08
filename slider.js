@@ -38,7 +38,7 @@
 
 		var svg = container.append('svg')
 			.attr('width', width)
-			.attr('height', height + margin.top + margin.bottom)
+			.attr('height', height)
 
 		var axis = svg.append("g").attr("class", "slider-axis");
 
