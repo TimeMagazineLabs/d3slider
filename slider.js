@@ -1,5 +1,4 @@
 ;(function(d3) {
-
 	// allow for use in Node/browserify or not
 	if (typeof module !== "undefined") {
 		var d3 = require("d3");
@@ -15,12 +14,12 @@
 		}
 
 		opts = opts || {};
-		container = container || "body";
 		container = typeof container === "string" ? d3.select(container) : container;
-													// Acccomodate play button width
-		var margin = opts.margin || {top: 20, right: opts.playBtn ? 70 : 30, bottom: 30, left: 30};
 
-		var width = opts.width || parseInt(container.style('width'),10),
+		// Acccomodate play button width
+		var margin = opts.margin || { top: 20, right: opts.playBtn? 70 : 30, bottom: 30, left: 30 };
+
+		var width = opts.width || parseInt(container.style('width'), 10),
 			height = opts.height || 60,
 			backdrop;
 
@@ -29,7 +28,7 @@
 		opts.domain = (opts.domain ? opts.domain : [0, 1]);
 
 		if (opts.playBtn){ 
-			var controls = container.append("div").attr("id","control-panel")
+			var controls = container.append("div").attr("id", "control-panel")
 			controls.append("img")
 				.attr("id", "playbtn")
 				.attr("class", "playbtn")
@@ -46,7 +45,8 @@
 			.domain(opts.domain)
 
 		// Make adjustments to range and position of axis if play button
-		xScale.range([0, width - margin.right  - margin.left])
+		xScale.range([0, width - margin.right  - margin.left]);
+
 		if (opts.playBtn){
 			axis.attr("transform", "translate(65," + 40 + ")");
 		} else {
@@ -54,10 +54,15 @@
 		}
 
 		var x = d3.svg.axis()
-			.scale(xScale)
+			.scale(xScale);
+
+		if (opts.interval) {
+			x.ticks((opts.domain[1] - opts.domain[0] + 1) / opts.interval);
+		} else {
 			x.ticks(width < 500 ? 5 : 10)
-			.orient('top')
-			.tickFormat(function(d) { return d; })
+		}
+			
+		x.orient('top').tickFormat(function(d) { return d; })
 
 		axis.call(x)
 
@@ -116,10 +121,11 @@
 			x.scale(xScale)
 			axis.call(x)
 
-			x.ticks(width < 500 ? 5 : 10)
+			if (!opts.interval) {
+				x.ticks(width < 500 ? 5 : 10);
+			}
 
-			svg
-				.attr("width",  width)
+			svg.attr("width",  width)
 
 			// optional callback
 			if (opts.onResize) {
