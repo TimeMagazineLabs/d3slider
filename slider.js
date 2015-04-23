@@ -14,7 +14,7 @@
 		}
 
 		opts = opts || {};
-		container = typeof container === "string" ? d3.select(container) : container;
+		container = d3.select(container);
 
 		// Acccomodate play button width
 		var margin = opts.margin || { top: 20, right: opts.playBtn? 70 : 30, bottom: 30, left: 30 };
@@ -77,6 +77,8 @@
 				.text(opts.label);
 		}
 
+		container.on("click", clickedOrDragged);
+
 		function clickedOrDragged(d) {
 			var coords = d3.mouse(svg.select(".domain")[0][0]),
 				dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0])),
@@ -84,10 +86,11 @@
 			
 			if (opts.snapToTick){
 				d3.select("#thumb").attr("transform", "translate(" + xScale(mili) + ",0)");
+				opts.onDrag(mili);
 			} else {
 				d3.select("#thumb").attr("transform", "translate(" + dx + ",0)");	
+				opts.onDrag(mili);
 			}
-			opts.onDrag(mili);
 		}
 		
 		var drag = d3.behavior.drag()
@@ -117,7 +120,7 @@
 
 			// Update scale
 			xScale.range([0, width - margin.right - margin.left]);
-			thumb.attr("transform", "translate(" + x.scale().range()[1] + ",0)")
+			//thumb.attr("transform", "translate(" + x.scale().range()[1] + ",0)")
 			x.scale(xScale)
 			axis.call(x)
 
@@ -153,11 +156,25 @@
 		}
 		addResizeEvent(resize, 250);
 		
+		function set(value) {
+			// bound input to domain
+			value = Math.max(Math.min(value, opts.domain[1]), opts.domain[0]);
+
+			if (opts.snapToTick){
+				d3.select("#thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+				opts.onDrag(value);
+			} else {
+				d3.select("#thumb").attr("transform", "translate(" + value + ",0)");	
+				opts.onDrag(value);
+			}			
+		}
+
 		return {
 			axis: axis,
 			scale: xScale,
 			height: height,
-			width: width
+			width: width,
+			set: set
 		}
 	}
 

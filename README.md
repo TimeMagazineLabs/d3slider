@@ -9,6 +9,7 @@ The current options are:
 		domain: [],
 		playBtn: true,
 		snapToTick: false,
+		interval: 1,
 		onDrag: function(v){
 			updateSlide(v)
 		}
