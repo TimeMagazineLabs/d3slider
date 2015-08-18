@@ -5,8 +5,9 @@
 	} else {
 		d3 = window.d3;
 	}
-	
+
 	var slider = function(container, opts) {
+		console.log(container);
 		// SETUP
 		if (!container) {
 			console.log("You must supply slider a container as the first argument");
@@ -14,6 +15,7 @@
 		}
 
 		opts = opts || {};
+
 		container = d3.select(container);
 
 		// Acccomodate play button width
@@ -24,10 +26,10 @@
 			backdrop;
 
 		var uid = s5(); // needed for namespacing the resize event
-		
+
 		opts.domain = (opts.domain ? opts.domain : [0, 1]);
 
-		if (opts.playBtn){ 
+		if (opts.playBtn){
 			var controls = container.append("div").attr("id", "control-panel")
 			controls.append("img")
 				.attr("id", "playbtn")
@@ -61,7 +63,7 @@
 		} else {
 			x.ticks(width < 500 ? 5 : 10)
 		}
-			
+
 		x.orient('top').tickFormat(function(d) { return d; })
 
 		axis.call(x)
@@ -83,20 +85,19 @@
 			var coords = d3.mouse(svg.select(".domain")[0][0]),
 				dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0])),
 				mili = Math.round(x.scale().invert(dx));
-			
 			if (opts.snapToTick){
-				d3.select("#thumb").attr("transform", "translate(" + xScale(mili) + ",0)");
+				d3.select("#" + container[0][0].id + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(mili) + ",0)");
 				opts.onDrag(mili);
 			} else {
-				d3.select("#thumb").attr("transform", "translate(" + dx + ",0)");	
+				d3.select("#" + container[0][0].id + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + dx + ",0)");
 				opts.onDrag(mili);
 			}
 		}
-		
+
 		var drag = d3.behavior.drag()
 			.on("drag", clickedOrDragged)
 			.on("dragstart", function() {});
-			
+
 		var thumb = axis.append("g")
 			.attr("class", "thumb")
 			.attr("id", "thumb")
@@ -107,15 +108,15 @@
 			.attr("d", "M0,6l6,10h-12l6,-11")
 
 		if (opts.thumbText){
-			thumb.append("text")	
+			thumb.append("text")
 				.attr("id", "thumb-text")
 				.attr("transform", "translate(0,32)")
 				.text(opts.thumbText)
 				.style("text-anchor", "middle")
 				.style("font-size", "14px");
 		}
-		
-		function resize() { 
+
+		function resize() {
 			width = parseInt(container.style("width"), 10);
 
 			// Update scale
@@ -155,18 +156,19 @@
 			});
 		}
 		addResizeEvent(resize, 250);
-		
+
 		function set(value) {
 			// bound input to domain
 			value = Math.max(Math.min(value, opts.domain[1]), opts.domain[0]);
-
+			var thumb = "#" + container[0][0].id + " > svg > .slider-axis > #thumb";
+			console.log(thumb);
 			if (opts.snapToTick){
-				d3.select("#thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+				d3.select(thumb).attr("transform", "translate(" + xScale(value) + ",0)");
 				opts.onDrag(value);
 			} else {
-				d3.select("#thumb").attr("transform", "translate(" + value + ",0)");	
+				d3.select(thumb).attr("transform", "translate(" + value + ",0)");
 				opts.onDrag(value);
-			}			
+			}
 		}
 
 		return {
