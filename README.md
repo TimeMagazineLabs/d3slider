@@ -6,10 +6,11 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 The current options are:
 
 	var mySlider = slider(container, {
-		domain: [],
+		domain: [0, 100],
 		playBtn: true,
 		snapToTick: false,
-		interval: 1,
+		tickInterval: 1,
+		labelInterval: 5,
 		onDrag: function(v){
 			updateSlide(v)
 		}

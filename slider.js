@@ -58,13 +58,20 @@
 		var x = d3.svg.axis()
 			.scale(xScale);
 
-		if (opts.interval) {
-			x.ticks((opts.domain[1] - opts.domain[0] + 1) / opts.interval);
+		if (opts.tickInterval) {
+			x.ticks((opts.domain[1] - opts.domain[0] + 1) / opts.tickInterval);
 		} else {
 			x.ticks(width < 500 ? 5 : 10)
 		}
 
-		x.orient('top').tickFormat(function(d) { return d; })
+		x.orient('top').tickFormat(function(d, i) { 
+			if (opts.labelInterval && (i % opts.labelInterval == 0)) {
+				return d;
+			} else {
+				return "";
+			}
+			return d;
+		});
 
 		axis.call(x)
 
@@ -81,13 +88,22 @@
 
 		container.on("click", clickedOrDragged);
 
+		// see below
+		var previous_snap = null;
+
 		function clickedOrDragged(d) {
 			var coords = d3.mouse(svg.select(".domain")[0][0]),
 				dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0])),
 				mili = Math.round(x.scale().invert(dx));
+
 			if (opts.snapToTick){
-				d3.select("#" + container[0][0].id + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(mili) + ",0)");
-				opts.onDrag(mili);
+				var snap = xScale(mili);
+				// we only want to fire the callback if we're moving to a new tick
+				if (snap != previous_snap) {
+					d3.select("#" + container[0][0].id + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(mili) + ",0)");
+					opts.onDrag(mili);					
+				}
+				previous_snap = snap;
 			} else {
 				d3.select("#" + container[0][0].id + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + dx + ",0)");
 				opts.onDrag(mili);
@@ -125,7 +141,7 @@
 			x.scale(xScale)
 			axis.call(x)
 
-			if (!opts.interval) {
+			if (!opts.tickInterval) {
 				x.ticks(width < 500 ? 5 : 10);
 			}
 
