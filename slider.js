@@ -177,7 +177,6 @@
 			// bound input to domain
 			value = Math.max(Math.min(value, opts.domain[1]), opts.domain[0]);
 			var thumb = "#" + container[0][0].id + " > svg > .slider-axis > #thumb";
-			console.log(thumb);
 			if (opts.snapToTick){
 				d3.select(thumb).attr("transform", "translate(" + xScale(value) + ",0)");
 				opts.onDrag(value);
