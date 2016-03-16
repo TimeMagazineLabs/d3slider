@@ -26,6 +26,8 @@
 		opts.domain = opts.domain || [0, 10];
 		opts.tickInterval = opts.tickInterval || 4;
 		opts.value || opts.domain[0];
+		opts.speed = opts.speed || 1000;
+		opts.loop = typeof opts.loop == "undefined" ? true: opts.loop;
 		value = opts.value;
 
 		if (opts.playButton){
@@ -66,8 +68,6 @@
 
 		axis.call(x)
 
-		element.on("click", clickedOrDragged);
-
 		// see below
 		var previous_snap = null;
 
@@ -104,6 +104,7 @@
 		thumb.append("path")
 			.attr("d", "M0,6l6,10h-12l6,-11")
 
+		/*
 		if (opts.thumbText){
 			thumb.append("text")
 				.attr("id", "thumb-text")
@@ -112,6 +113,7 @@
 				.style("text-anchor", "middle")
 				.style("font-size", "14px");
 		}
+		*/
 
 		//console.log(xScale, opts.value, xScale(opts.value));
 		d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(opts.value) + ",0)");
@@ -153,6 +155,10 @@
 		}
 		addResizeEvent(resize, 250);
 
+		// play button controls
+		var timer,
+			playing = false;
+
 		function set(value) {
 			// bound input to domain
 			value = Math.max(Math.min(value, opts.domain[1]), opts.domain[0]);
@@ -160,9 +166,19 @@
 			opts.onDrag && opts.onDrag(value);
 		}
 
+		function get() {
+			return value;
+		}
+
 		function advance() {
 			value += opts.interval;
 			// loop around
+			if (value >= opts.domain[1] && !opts.loop) {
+				playing = false;
+				svg.select(container + " #playButton").attr("src", "http://img.timeinc.net/time/wp/interactives/img/ui/circlearrow.png");
+				clearTimeout(timer);
+				return;				
+			}
 			if (value > opts.domain[1]) {
 				value = opts.domain[0];
 			}
@@ -170,13 +186,34 @@
 			opts.onDrag && opts.onDrag(value);			
 		}
 
+		d3.select(container + " #playButton").on("click", function() {
+			if (!playing) {
+				playing = true;
+				d3.select(container + " #playButton").attr("src", "http://img.timeinc.net/time/wp/interactives/img/ui/circlestop.png");
+				advance();
+				timer = setInterval(function() {
+					advance();
+				}, opts.speed);
+			} else {
+				playing = false;
+				d3.select(container + " #playButton").attr("src", "http://img.timeinc.net/time/wp/interactives/img/ui/circlearrow.png");
+				clearTimeout(timer);
+			}
+			d3.event.stopPropagation(); // otherwise clicking the play button triggers the following handler and resets the value to the min
+		});
+
+		element.on("click", function(d) {
+			clickedOrDragged(d);
+		});
+
 		return {
 			axis:    axis,
 			scale:   xScale,
 			height:  opts.height,
 			width:   opts.width,
 			advance: advance,
-			set:     set
+			set:     set,
+			get:     get
 		}
 	}
 
