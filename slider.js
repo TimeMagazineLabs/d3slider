@@ -7,109 +7,90 @@
 	}
 
 	var slider = function(container, opts) {
-		console.log(container);
-		// SETUP
+		var value; // current value of slider at all times
+
+		// build slider
 		if (!container) {
 			console.log("You must supply slider a container as the first argument");
 			return null;
 		}
-
+		element = d3.select(container);
 		opts = opts || {};
 
-		container = d3.select(container);
 
-		// Acccomodate play button width
-		var margin = opts.margin || { top: 20, right: opts.playBtn? 70 : 30, bottom: 30, left: 30 };
+		// options
+		opts.margin = opts.margin || { right: opts.playButton? 70 : 30, left: 30 };
+		opts.interval = opts.interval || 1;
+		opts.width = opts.width || parseInt(element.style('width'), 10);
+		opts.height = opts.height || 60;
+		opts.domain = opts.domain || [0, 10];
+		opts.tickInterval = opts.tickInterval || 4;
+		opts.value || opts.domain[0];
+		value = opts.value;
 
-		var width = opts.width || parseInt(container.style('width'), 10),
-			height = opts.height || 60,
-			backdrop;
-
-		var uid = s5(); // needed for namespacing the resize event
-
-		opts.domain = (opts.domain ? opts.domain : [0, 1]);
-
-		if (opts.playBtn){
-			var controls = container.append("div").attr("id", "control-panel")
+		if (opts.playButton){
+			var controls = element.append("div").attr("id", "control-panel")
 			controls.append("img")
-				.attr("id", "playbtn")
-				.attr("class", "playbtn")
-				.attr("src", "http://img.timeinc.net/time/wp/interactives/apps/death_penalty_map/img/circlearrow.png");
+				.attr("id", "playButton")
+				.attr("class", "playButton")
+				.attr("src", "http://img.timeinc.net/time/wp/interactives/img/ui/circlearrow.png");
 		};
 
-		var svg = container.append('svg')
-			.attr('width', width)
-			.attr('height', height)
+		var svg = element.append('svg')
+			.attr('width', opts.width)
+			.attr('height', opts.height)
 
 		var axis = svg.append("g").attr("class", "slider-axis");
 
-		var xScale = d3.scale.linear()
-			.domain(opts.domain)
+		var xScale = d3.scale.linear().domain(opts.domain)
 
 		// Make adjustments to range and position of axis if play button
-		xScale.range([0, width - margin.right  - margin.left]);
+		xScale.range([0, opts.width - opts.margin.right  - opts.margin.left]);
 
-		if (opts.playBtn){
-			axis.attr("transform", "translate(65," + 40 + ")");
+		if (opts.playButton){
+			axis.attr("transform", "translate(75," + 40 + ")");
 		} else {
 			axis.attr("transform", "translate(25," + 45 + ")");
 		}
 
-		var x = d3.svg.axis()
-			.scale(xScale);
+		// axis
+		var x = d3.svg.axis().scale(xScale);
 
-		if (opts.tickInterval) {
-			x.ticks((opts.domain[1] - opts.domain[0] + 1) / opts.tickInterval);
-		} else {
-			x.ticks(width < 500 ? 5 : 10)
-		}
+		var ticks = d3.range(opts.domain[0], opts.domain[1] + 1, opts.tickInterval);
+
+		x.tickValues(ticks);
 
 		x.orient('top').tickFormat(function(d, i) { 
-			if (opts.labelInterval && (i % opts.labelInterval == 0)) {
-				return d;
-			} else {
-				return "";
-			}
-			return d;
+			return opts.format? opts.format(d) : d;
 		});
 
 		axis.call(x)
 
-		if (opts.label) {
-			var label = axis_g.append("text")
-				.attr("transform", "translate(" + (opts.label_offset || 0) + ",0)rotate(-90)")
-				.attr("x", 0)
-				.attr("y", 5)
-				.attr("dy", ".71em")
-				.style("text-anchor", "end")
-				.attr("class", "axis_label")
-				.text(opts.label);
-		}
-
-		container.on("click", clickedOrDragged);
+		element.on("click", clickedOrDragged);
 
 		// see below
 		var previous_snap = null;
 
+		// fire when we've moved the thumbnail
 		function clickedOrDragged(d) {
 			var coords = d3.mouse(svg.select(".domain")[0][0]),
-				dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0])),
-				mili = Math.round(x.scale().invert(dx));
+				dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0]));
 
-			if (opts.snapToTick){
-				var snap = xScale(mili);
-				// we only want to fire the callback if we're moving to a new tick
-				if (snap != previous_snap) {
-					d3.select("#" + container[0][0].id + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(mili) + ",0)");
-					opts.onDrag(mili);					
-				}
+			value = Math.round(x.scale().invert(dx));
+
+			// round the value to the nearest interval
+			value = Math.max(x.scale().domain()[0], Math.round(value / opts.interval) * opts.interval);
+			var snap = xScale(value);
+			
+			// we only want to fire the callback if we're moving to a new tick
+			if (snap != previous_snap) {
+				d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+				opts.onDrag && opts.onDrag(value);					
 				previous_snap = snap;
-			} else {
-				d3.select("#" + container[0][0].id + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + dx + ",0)");
-				opts.onDrag(mili);
 			}
 		}
 
+		// events
 		var drag = d3.behavior.drag()
 			.on("drag", clickedOrDragged)
 			.on("dragstart", function() {});
@@ -132,28 +113,27 @@
 				.style("font-size", "14px");
 		}
 
+		//console.log(xScale, opts.value, xScale(opts.value));
+		d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(opts.value) + ",0)");
+
 		function resize() {
-			width = parseInt(container.style("width"), 10);
+			opts.width = parseInt(element.style("width"), 10);
 
 			// Update scale
-			xScale.range([0, width - margin.right - margin.left]);
-			//thumb.attr("transform", "translate(" + x.scale().range()[1] + ",0)")
+			xScale.range([0, opts.width - opts.margin.right - opts.margin.left]);
 			x.scale(xScale)
-			axis.call(x)
-
-			if (!opts.tickInterval) {
-				x.ticks(width < 500 ? 5 : 10);
-			}
-
-			svg.attr("width",  width)
+			axis.call(x);
+			x.ticks(opts.width < 500 ? 5 : 10);
+			svg.attr("width", opts.width)
 
 			// optional callback
 			if (opts.onResize) {
-				opts.onResize(width)//, height);
+				opts.onResize(width);
 			}
 		}
 
-		var resizeTimer;
+		var resizeTimer,
+			uid = s5(); // needed for namespacing the resize event
 
 		// http://stackoverflow.com/questions/3339825/what-is-the-best-practise-to-not-to-override-other-bound-functions-to-window-onr
 		function addResizeEvent(func, dur) {
@@ -176,22 +156,27 @@
 		function set(value) {
 			// bound input to domain
 			value = Math.max(Math.min(value, opts.domain[1]), opts.domain[0]);
-			var thumb = "#" + container[0][0].id + " > svg > .slider-axis > #thumb";
-			if (opts.snapToTick){
-				d3.select(thumb).attr("transform", "translate(" + xScale(value) + ",0)");
-				opts.onDrag(value);
-			} else {
-				d3.select(thumb).attr("transform", "translate(" + value + ",0)");
-				opts.onDrag(value);
+			d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+			opts.onDrag && opts.onDrag(value);
+		}
+
+		function advance() {
+			value += opts.interval;
+			// loop around
+			if (value > opts.domain[1]) {
+				value = opts.domain[0];
 			}
+			d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+			opts.onDrag && opts.onDrag(value);			
 		}
 
 		return {
-			axis: axis,
-			scale: xScale,
-			height: height,
-			width: width,
-			set: set
+			axis:    axis,
+			scale:   xScale,
+			height:  opts.height,
+			width:   opts.width,
+			advance: advance,
+			set:     set
 		}
 	}
 
