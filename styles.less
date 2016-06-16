@@ -1,77 +1,71 @@
-.time-interactive {
-	#control-panel {
-		position: relative;
-		> div {
-			float: right;	
-		}
-		.playButton {
-	 	   	width: 40px;
-	    	cursor: pointer;
-	    	position: absolute;
-			margin: 8px;
-			left: 0;
-			top: 2px;
-		}
-	}
-	
-	}
-	#slider {
-		cursor: pointer;
-		
-		height: 58px;
-		-webkit-transition: opacity .5s; /* Safari */
-    	transition: opacity .5s;
-	}
-	.slider-axis {		
-		font-size: 14px;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		user-select: none;
+.d3slider {
+    #control-panel {
+        position: relative;
+        > div {
+            float: right;
+        }
+        .playButton {
+            width: 40px;
+            cursor: pointer;
+            position: absolute;
+            margin: 8px;
+            left: 0;
+            top: 2px;
+        }
+    }
+ 
+    #slider {
+        cursor: pointer;
+        height: 58px;
+        -webkit-transition: opacity .5s;
+        /* Safari */
+        transition: opacity .5s;
+    }
+ 
+    .slider-axis {
+        font-size: 14px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        line,
+        path {
+            stroke: #777;
+            fill: none;
+        }
+        .domain {
+            stroke-width: 1px;
+        }
+        .thumb path {
+            fill: #333;
+            stroke: #333;
+            stroke-width: 2px;
+            cursor: pointer;
+        }
+        .tick {
+            font-size: 15px;
+        }
+    }
+ 
+    #thumb-text {
+        fill: #D7504F;
+    }
+ 
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+        text.label {
+            fill: #fff;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+    }
+}
 
-		line,path {
-			stroke: #777;
-			fill: none;
-		}
-
-		.domain {
-		  stroke-width: 1px;
-		}
-
-		.thumb path {
-			fill:   #333;
-			stroke: #333;
-			stroke-width: 2px;
-			cursor: pointer;	
-		}
-
-		.tick {
-			font-size: 15px;
-		}
-		//.tick:hover{
-		//	font-size: 16px;
-		//	cursor: pointer;
-		//}
-	}
-	
-	#thumb-text {
-		fill: #D7504F;
-	}
-	.axis path,
-	.axis line {
-	  fill: none;
-	  stroke: #000;
-	  shape-rendering: crispEdges;
-
-	text.label {
-		fill: #fff;
-	}
-
-	.line {
-	  fill: none;
-	  stroke: steelblue;
-	  stroke-width: 3px;
-	}
-
-	@media (max-width: 500px) {
-	}
+.d3slider.locked {
+	opacity: 0.5;
 }

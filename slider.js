@@ -15,6 +15,7 @@
 			return null;
 		}
 		element = d3.select(container);
+		element.classed("d3slider", true);
 		opts = opts || {};
 
 
@@ -28,6 +29,12 @@
 		opts.value || opts.domain[0];
 		opts.speed = opts.speed || 1000;
 		opts.loop = typeof opts.loop == "undefined" ? true: opts.loop;
+		opts.locked = opts.locked || false;
+
+		if (opts.locked) {
+			element.classed("locked", true);
+		}
+
 		value = opts.value;
 
 		if (opts.playButton){
@@ -73,6 +80,9 @@
 
 		// fire when we've moved the thumbnail
 		function clickedOrDragged(d) {
+			if (opts.locked) {
+				return;
+			}
 			var coords = d3.mouse(svg.select(".domain")[0][0]),
 				dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0]));
 
@@ -187,6 +197,10 @@
 		}
 
 		d3.select(container + " #playButton").on("click", function() {
+			if (opts.locked) {
+				return;
+			}
+
 			if (!playing) {
 				playing = true;
 				d3.select(container + " #playButton").attr("src", "http://img.timeinc.net/time/wp/interactives/img/ui/circlestop.png");
@@ -213,7 +227,16 @@
 			width:   opts.width,
 			advance: advance,
 			set:     set,
-			get:     get
+			get:     get,
+			lock: 	 function() {
+				opts.locked = true;
+				element.classed("locked", true);
+				console.log("Locking", element);
+			},
+			unlock: function() {
+				opts.locked = false;
+				element.classed("locked", false);				
+			}
 		}
 	}
 
