@@ -57,7 +57,7 @@
 		// Make adjustments to range and position of axis if play button
 		xScale.range([0, opts.width - opts.margin.right  - opts.margin.left]);
 
-		axis.attr("transform", "translate(" + opts.margin.left + "," + 35 + ")");
+		axis.attr("transform", "translate(" + opts.margin.left + "," + 37 + ")");
 
 		// axis
 		var x = d3.svg.axis().scale(xScale);
@@ -119,7 +119,7 @@
 			.call(drag);
 
 		thumb.append("circle")
-			.attr("r", opts.size || 8)
+			.attr("r", opts.size || 12)
 			.attr("cx", 0)
 			.attr("cy", 0)
 			.style("fill", opts.color);

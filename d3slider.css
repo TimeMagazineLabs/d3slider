@@ -21,6 +21,7 @@
   height: 58px;
   -webkit-transition: opacity .5s;
   /* Safari */
+
   transition: opacity .5s;
 }
 .d3slider .slider-axis {
@@ -44,9 +45,10 @@
   stroke-width: 2px;
   cursor: pointer;
 }
-.d3slider .slider-axis .tick path,
-.d3slider .slider-axis line {
+.d3slider .slider-axis .tick line {
   stroke: #808080;
+}
+.d3slider .slider-axis .tick text {
   font-size: 14px;
 }
 .d3slider #thumb-text {
