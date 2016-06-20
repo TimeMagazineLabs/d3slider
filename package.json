@@ -1,21 +1,26 @@
 {
-    "name": "d3slider",
-    "version": "0.0.1",
-    "description": "Wrapper for D3 slider axis",
-    "main": "index.js",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/TimeMagazine/d3slider.git"
-    },
-    "dependencies": {
-        "browserify": ">= 2.0.0"
-    },
-    "author": {
-        "name" : "Dave Johnson",
-        "email" : "david.johnson@time.com"
-    },
-    "browserify": {
-        "transform": ["node-lessify"]
-    },
-    "scripts" : {}
+  "name": "d3slider",
+  "version": "0.0.1",
+  "description": "Wrapper for D3 slider axis",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TimeMagazine/d3slider.git"
+  },
+  "dependencies": {
+    "browserify": "^13.0.1"
+  },
+  "author": {
+    "name": "Dave Johnson, Chris Wilson, Pratheek Rebala",
+    "email": "david.johnson@time.com"
+  },
+  "browserify": {
+    "transform": [
+      "node-lessify"
+    ]
+  },
+  "scripts": {},
+  "devDependencies": {
+    "less": "^2.7.1"
+  }
 }

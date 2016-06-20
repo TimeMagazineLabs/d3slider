@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <title>D3 Slider Demo</title>
+        <link rel="stylesheet" href="d3slider.css">
+        <style>
+body {
+    max-width: 600px;
+    font-family: Arial, serif;
+}
+        </style>
+    </head>
+    <body>
+        <div id="slider"></div>
+        <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="slider.js"></script>
+        <script>
+var mySlider = d3slider("#slider", {
+    domain: [0, 100],
+    value: 50,
+    playButton: false,
+    interval: 1,
+    tickInterval: 10,
+    textBox: true,
+    onDrag: function(v) {
+        console.log(v);
+    }
+});
+        </script>
+    </body>
+</html>

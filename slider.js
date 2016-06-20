@@ -20,7 +20,7 @@
 
 
 		// options
-		opts.margin = opts.margin || { right: opts.playButton? 70 : 30, left: 30 };
+		opts.margin = { right: opts.playButton? 75 : 25, left: 25 };
 		opts.interval = opts.interval || 1;
 		opts.width = opts.width || parseInt(element.style('width'), 10);
 		opts.height = opts.height || 60;
@@ -30,6 +30,7 @@
 		opts.speed = opts.speed || 1000;
 		opts.loop = typeof opts.loop == "undefined" ? true: opts.loop;
 		opts.locked = opts.locked || false;
+		opts.color = opts.color || "#CC0000";
 
 		if (opts.locked) {
 			element.classed("locked", true);
@@ -56,11 +57,7 @@
 		// Make adjustments to range and position of axis if play button
 		xScale.range([0, opts.width - opts.margin.right  - opts.margin.left]);
 
-		if (opts.playButton){
-			axis.attr("transform", "translate(75," + 40 + ")");
-		} else {
-			axis.attr("transform", "translate(25," + 45 + ")");
-		}
+		axis.attr("transform", "translate(" + opts.margin.left + "," + 35 + ")");
 
 		// axis
 		var x = d3.svg.axis().scale(xScale);
@@ -68,8 +65,9 @@
 		var ticks = d3.range(opts.domain[0], opts.domain[1] + 1, opts.tickInterval);
 
 		x.tickValues(ticks);
+		x.tickSize(8, 0);
 
-		x.orient('top').tickFormat(function(d, i) { 
+		x.orient('bottom').tickFormat(function(d, i) { 
 			return opts.format? opts.format(d) : d;
 		});
 
@@ -83,6 +81,7 @@
 			if (opts.locked) {
 				return;
 			}
+
 			var coords = d3.mouse(svg.select(".domain")[0][0]),
 				dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0]));
 
@@ -91,7 +90,15 @@
 			// round the value to the nearest interval
 			value = Math.max(x.scale().domain()[0], Math.round(value / opts.interval) * opts.interval);
 			var snap = xScale(value);
-			
+
+			if (opts.textBox) {
+				element.select(".arrow_box_container")
+					.style("left", (opts.margin.left + xScale(value)) + "px");
+
+				element.select(".arrow_box")
+					.html(value);
+			}
+
 			// we only want to fire the callback if we're moving to a new tick
 			if (snap != previous_snap) {
 				d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
@@ -111,8 +118,21 @@
 			.attr("transform", "translate(" + x.scale().range()[0] + ",0)")
 			.call(drag);
 
-		thumb.append("path")
-			.attr("d", "M0,6l6,10h-12l6,-11")
+		thumb.append("circle")
+			.attr("r", opts.size || 8)
+			.attr("cx", 0)
+			.attr("cy", 0)
+			.style("fill", opts.color);
+
+		if (opts.textBox) {
+			element
+				.append("div")
+				.attr("class", "arrow_box_container")
+				.style("left", (opts.margin.left + xScale(opts.value)) + "px")
+				.append("div")
+				.attr("class", "arrow_box")
+				.html(opts.value);
+		}
 
 		/*
 		if (opts.thumbText){
@@ -244,7 +264,7 @@
 	if (typeof module !== "undefined") {
 		module.exports = slider;
 	} else {
-		window.d3chart = slider;
+		window.d3slider = slider;
 	}
 
 	function s5() {

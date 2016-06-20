@@ -25,4 +25,7 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 
 ### Methods
 
+### Generating CSS
 
+	npm install
+	lessc styles.less > d3slider.css

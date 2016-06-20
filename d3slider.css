@@ -1,0 +1,101 @@
+.d3slider {
+  position: relative;
+  font-size: 14px;
+}
+.d3slider #control-panel {
+  position: relative;
+}
+.d3slider #control-panel > div {
+  float: right;
+}
+.d3slider #control-panel .playButton {
+  width: 40px;
+  cursor: pointer;
+  position: absolute;
+  margin: 8px;
+  left: 0;
+  top: 2px;
+}
+.d3slider #slider {
+  cursor: pointer;
+  height: 58px;
+  -webkit-transition: opacity .5s;
+  /* Safari */
+  transition: opacity .5s;
+}
+.d3slider .slider-axis {
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.d3slider .slider-axis line,
+.d3slider .slider-axis path {
+  stroke: #777;
+  fill: none;
+}
+.d3slider .slider-axis .domain {
+  stroke-width: 2px;
+  stroke: #808080;
+}
+.d3slider .slider-axis .thumb path {
+  fill: #333;
+  stroke: #333;
+  stroke-width: 2px;
+  cursor: pointer;
+}
+.d3slider .slider-axis .tick path,
+.d3slider .slider-axis line {
+  stroke: #808080;
+  font-size: 14px;
+}
+.d3slider #thumb-text {
+  fill: #D7504F;
+}
+.d3slider .axis path,
+.d3slider .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.d3slider .axis path text.label,
+.d3slider .axis line text.label {
+  fill: #fff;
+}
+.d3slider .axis path .line,
+.d3slider .axis line .line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+.d3slider .arrow_box_container {
+  position: absolute;
+  top: 0;
+}
+.d3slider .arrow_box {
+  font-size: 13px;
+  position: relative;
+  left: -50%;
+  background: #000000;
+  color: white;
+  display: inline-block;
+  padding: 3px 5px;
+  border-radius: 2px;
+}
+.d3slider .arrow_box:after {
+  top: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(0, 0, 0, 0);
+  border-top-color: #000000;
+  border-width: 4px;
+  margin-left: -4px;
+}
+.d3slider.locked {
+  opacity: 0.5;
+}
