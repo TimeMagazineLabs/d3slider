@@ -8,7 +8,9 @@
     "url": "https://github.com/TimeMagazine/d3slider.git"
   },
   "dependencies": {
-    "browserify": "^13.0.1"
+    "browserify": "^13.3.0",
+    "d3": "^4.4.3",
+    "node-lessify": "^0.1.4"
   },
   "author": {
     "name": "Dave Johnson, Chris Wilson, Pratheek Rebala",

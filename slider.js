@@ -18,7 +18,6 @@
 		element.classed("d3slider", true);
 		opts = opts || {};
 
-
 		// options
 		opts.margin = { right: opts.playButton? 75 : 25, left: 25 };
 		opts.interval = opts.interval || 1;
@@ -26,7 +25,7 @@
 		opts.height = opts.height || 60;
 		opts.domain = opts.domain || [0, 10];
 		opts.tickInterval = opts.tickInterval || 4;
-		opts.value || opts.domain[0];
+		opts.value  = opts.hasOwnProperty("value")? opts.value : opts.domain[0];
 		opts.speed = opts.speed || 1000;
 		opts.loop = typeof opts.loop == "undefined" ? true: opts.loop;
 		opts.locked = opts.locked || false;
@@ -52,7 +51,7 @@
 
 		var axis = svg.append("g").attr("class", "slider-axis");
 
-		var xScale = d3.scale.linear().domain(opts.domain)
+		var xScale = d3.scaleLinear().domain(opts.domain)
 
 		// Make adjustments to range and position of axis if play button
 		xScale.range([0, opts.width - opts.margin.right  - opts.margin.left]);
@@ -60,14 +59,14 @@
 		axis.attr("transform", "translate(" + opts.margin.left + "," + 37 + ")");
 
 		// axis
-		var x = d3.svg.axis().scale(xScale);
+		var x = d3.axisBottom().scale(xScale);
 
 		var ticks = d3.range(opts.domain[0], opts.domain[1] + 1, opts.tickInterval);
 
 		x.tickValues(ticks);
 		x.tickSize(8, 0);
 
-		x.orient('bottom').tickFormat(function(d, i) { 
+		x.tickFormat(function(d, i) { 
 			return opts.format? opts.format(d) : d;
 		});
 
@@ -82,7 +81,7 @@
 				return;
 			}
 
-			var coords = d3.mouse(svg.select(".domain")[0][0]),
+			var coords = d3.mouse(svg.select(".domain").node()),
 				dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0]));
 
 			value = Math.round(x.scale().invert(dx));
@@ -108,9 +107,8 @@
 		}
 
 		// events
-		var drag = d3.behavior.drag()
-			.on("drag", clickedOrDragged)
-			.on("dragstart", function() {});
+		var drag = d3.drag()
+			.on("drag", clickedOrDragged);
 
 		var thumb = axis.append("g")
 			.attr("class", "thumb")
