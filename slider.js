@@ -56,7 +56,7 @@
 		// Make adjustments to range and position of axis if play button
 		xScale.range([0, opts.width - opts.margin.right  - opts.margin.left]);
 
-		axis.attr("transform", "translate(" + opts.margin.left + "," + 37 + ")");
+		axis.attr("transform", "translate(" + opts.margin.left + "," + 18 + ")");
 
 		// axis
 		var x = d3.axisBottom().scale(xScale);
@@ -64,7 +64,7 @@
 		var ticks = d3.range(opts.domain[0], opts.domain[1] + 1, opts.tickInterval);
 
 		x.tickValues(ticks);
-		x.tickSize(8, 0);
+		x.tickSize(10, 0);
 
 		x.tickFormat(function(d, i) { 
 			return opts.format? opts.format(d) : d;
