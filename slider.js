@@ -19,7 +19,7 @@
 		opts = opts || {};
 
 		// options
-		opts.margin = { right: opts.playButton? 75 : 25, left: 25 };
+		opts.margin = { left: opts.playButton? 60 : 25, right: 25, top: opts.playButton? 22 : 18  };
 		opts.interval = opts.interval || 1;
 		opts.width = opts.width || parseInt(element.style('width'), 10);
 		opts.height = opts.height || 60;
@@ -56,7 +56,7 @@
 		// Make adjustments to range and position of axis if play button
 		xScale.range([0, opts.width - opts.margin.right  - opts.margin.left]);
 
-		axis.attr("transform", "translate(" + opts.margin.left + "," + 18 + ")");
+		axis.attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 
 		// axis
 		var x = d3.axisBottom().scale(xScale);
@@ -103,6 +103,13 @@
 				d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 				opts.onDrag && opts.onDrag(value);					
 				previous_snap = snap;
+			}
+
+			// cancel playing when manually moved
+			if (playing) {
+				playing = false;
+				d3.select(container + " #playButton").attr("src", "http://img.timeinc.net/time/wp/interactives/img/ui/circlearrow.png");
+				clearTimeout(timer);
 			}
 		}
 
