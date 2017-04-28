@@ -253,6 +253,7 @@
 			advance: advance,
 			set:     set,
 			get:     get,
+			playing: playing,
 			lock: 	 function() {
 				opts.locked = true;
 				element.classed("locked", true);
@@ -261,6 +262,19 @@
 			unlock: function() {
 				opts.locked = false;
 				element.classed("locked", false);				
+			},
+			start: function() {
+				playing = true;
+				d3.select(container + " #playButton").attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlestop.png");
+				advance();
+				timer = setInterval(function() {
+					advance();
+				}, opts.speed);
+			},
+			stop: function() {
+				playing = false;
+				d3.select(container + " #playButton").attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlearrow.png");
+				clearTimeout(timer);				
 			}
 		}
 	}
