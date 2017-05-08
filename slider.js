@@ -32,6 +32,7 @@
 		opts.loop = typeof opts.loop == "undefined" ? true: opts.loop;
 		opts.locked = opts.locked || false;
 		opts.color = opts.color || "#CC0000";
+		opts.snapToTick = opts.snapToTick || false;
 
 		if (opts.locked) {
 			element.classed("locked", true);
@@ -88,9 +89,27 @@
 
 			value = Math.round(x.scale().invert(dx));
 
-			// round the value to the nearest interval
-			value = Math.max(x.scale().domain()[0], Math.round(value / opts.interval) * opts.interval);
-			var snap = xScale(value);
+			// if snapToTick, round the value to the nearest tick
+			if (opts.snapToTick) {
+				var distance = Infinity,
+					tick = null;
+
+				for (var t = 0; t < ticks.length; t += 1) {
+					var d = Math.abs(value - ticks[t]);
+					if (d < distance) {
+						distance = d;
+						tick = ticks[t];
+					}
+				}
+
+				value = tick;
+				var snap = xScale(value);
+			} else {
+
+				// round the value to the nearest interval
+				value = Math.max(x.scale().domain()[0], Math.round(value / opts.interval) * opts.interval);
+				var snap = xScale(value);
+			}
 
 			if (opts.textBox) {
 				element.select(".arrow_box_container")
@@ -212,6 +231,22 @@
 
 		function advance() {
 			value += opts.playInterval;
+
+			if (opts.snapToTick && value <= ticks[ticks.length - 1]) {
+				var distance = Infinity,
+					tick = null;
+
+				for (var t = 0; t < ticks.length; t += 1) {
+					var d = Math.abs(value - ticks[t]);
+					if (d < distance && value < ticks[t]) {
+						distance = d;
+						tick = ticks[t];
+					}
+				}
+
+				value = tick;
+			}
+
 			// loop around
 			if (value >= opts.domain[1] && !opts.loop) {
 				playing = false;
