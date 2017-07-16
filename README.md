@@ -13,9 +13,11 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 		value: 50,
 		loop: true,
 		onDrag: function(v){
-			updateSlide(v)
+			console.log(v)
 		}
 	});		
+
+## Main parameters
 
 + domain: The min and max values of the slides
 + playButton (boolean): Whether to include a play button to animate through the slider
@@ -25,16 +27,14 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 + value: Initial slider position. Defaults to first value in domain.
 + onDrag: The callback that fires when the position of the slider changes.
 
-<<<<<<< HEAD
-Still experimental, more options to come. 
+## Extra parameters
++ margin: `{ left: 10, right: 10, top: 40, bottom: 10 }`, e.g. Normally we'll guess the appropriate values based on your other params
++ speed: Milliseconds between stops on autoplay
++ locked: Whether the slider is manipulable
++ color: Hex color of thumb
++ snapToTick: boolean, whether to force user to the nearest tick value
++ tickValues: Specific values for ticks
++ textBox: Whether to display the value in the box over the slider
 
 ## LICENSE
 MIT
-=======
-### Methods
-
-### Generating CSS
-
-	npm install
-	lessc styles.less > d3slider.css
->>>>>>> e35ca2ae6599fcf8c97809f4f8a897824e6b1e19

@@ -34,6 +34,11 @@
 		opts.color = opts.color || "#CC0000";
 		opts.snapToTick = opts.snapToTick || false;
 
+		if (opts.textBox) {
+			opts.margin.top += 20;
+			opts.height += 20;
+		}
+
 		if (opts.locked) {
 			element.classed("locked", true);
 		}
@@ -158,6 +163,7 @@
 				.append("div")
 				.attr("class", "arrow_box_container")
 				.style("left", (opts.margin.left + xScale(opts.value)) + "px")
+				.style("top", (13 - opts.size) + "px")
 				.append("div")
 				.attr("class", "arrow_box")
 				.html(opts.value);
@@ -232,7 +238,8 @@
 		function advance() {
 			value += opts.playInterval;
 
-			if (opts.snapToTick && value <= ticks[ticks.length - 1]) {
+			// if (opts.snapToTick && value <= ticks[ticks.length - 1]) {
+			if (opts.snapToTick) {
 				var distance = Infinity,
 					tick = null;
 
@@ -244,11 +251,11 @@
 					}
 				}
 
-				value = tick;
+				value = tick;				
 			}
 
 			// loop around
-			if (value >= opts.domain[1] && !opts.loop) {
+			if ((!value || value >= opts.domain[1]) && !opts.loop) {
 				playing = false;
 				svg.select(container + " #playButton").attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlearrow.png");
 				clearTimeout(timer);
@@ -259,7 +266,7 @@
 
 				return;
 			}
-			if (value > opts.domain[1]) {
+			if (!value || value > opts.domain[1]) {
 				value = opts.startValue;
 			}
 			d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
