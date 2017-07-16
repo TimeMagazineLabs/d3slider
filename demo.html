@@ -1,30 +1,29 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-		<title>d3slider demo</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>D3 Slider Demo</title>
         <style>
-#slider_basic {
-	max-width: 600px;
+body {
+    max-width: 600px;
+    font-family: Arial, serif;
 }
-
-
         </style>
     </head>
-	<body>
-		<div id="slider_basic"></div>
-		<div id="slider_autoplay"></div>
-		<script type="text/javascript" src="dist/d3slider.js"></script>
-		<script>
-var basic = d3slider("#slider_basic", {
-	
+    <body>
+        <div id="slider"></div>
+        <script src="dist/d3slider.js"></script>
+        <script>
+var mySlider = d3slider("#slider", {
+    domain: [0, 100],
+    value: 50,
+    playButton: false,
+    interval: 1,
+    tickInterval: 10,
+    textBox: true,
+    onDrag: function(v) {
+        console.log(v);
+    }
 });
-
-
-
-
-		</script>
-	</body>
+        </script>
+    </body>
 </html>

@@ -8,6 +8,14 @@
     "url": "git+https://github.com/TimeMagazine/d3slider.git"
   },
   "author": "Dave Johnson <david.johnson@time.com>, Chris Wilson <chris.wilson@time.com>",
+  },
+  "dependencies": {
+    "d3": "^4.7.4",
+  },
+  "author": {
+    "name": "Dave Johnson, Chris Wilson, Pratheek Rebala",
+    "email": "david.johnson@time.com"
+  },
   "browserify": {
     "transform": [
       "node-lessify"
@@ -24,10 +32,8 @@
     "scale"
   ],
   "license": "MIT",
-  "dependencies": {
+  "dev-dependencies": {
     "browserify": "^14.4.0",
-    "d3": "^4.10.0",
     "node-lessify": "0.1.5"
-  },
-  "devDependencies": {}
+  }
 }

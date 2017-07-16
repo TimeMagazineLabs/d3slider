@@ -1,78 +1,112 @@
-.time-interactive {
-	#control-panel {
+.d3slider {
+    position: relative;
+    font-size: 14px;
 
-		position: relative;
-		> div {
-			float: right;	
-		}
-		.playbtn {
-	 	   	width: 40px;
-	    	cursor: pointer;
-	    	position: absolute;
-			margin: 8px;
-			left: 0;
-			top: 2px;
-		}
-	}
-	
-	}
-	#slider {
-		cursor: pointer;
-		
-		height: 58px;
-		-webkit-transition: opacity .5s; /* Safari */
-    	transition: opacity .5s;
-	}
-	.slider-axis {		
-		font-size: 14px;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		user-select: none;
+    #control-panel {
+        position: relative;
+        > div {
+            float: right;
+        }
+        .playButton {
+            width: 40px;
+            cursor: pointer;
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+    }
+ 
+    #slider {
+        cursor: pointer;
+        height: 58px;
+        -webkit-transition: opacity .5s;
+        /* Safari */
+        transition: opacity .5s;
+    }
+ 
+    .slider-axis {
+        font-size: 14px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        line,
+        path {
+            stroke: #777;
+            fill: none;
+        }
 
-		line,path {
-			stroke: #777;
-			fill: none;
-		}
+        .domain {
+            stroke-width: 1px;
+            stroke: #808080;
+        }
 
-		.domain {
-		  stroke-width: 1px;
-		}
+        .thumb path {
+            fill: #333;
+            stroke: #333;
+            stroke-width: 2px;
+            cursor: pointer;
+        }
 
-		.thumb path {
-			fill:   #333;
-			stroke: #333;
-			stroke-width: 2px;
-			cursor: pointer;	
-		}
+        .tick line {
+            stroke: #333;
+        }
 
-		.tick {
-			font-size: 15px;
-		}
-		//.tick:hover{
-		//	font-size: 16px;
-		//	cursor: pointer;
-		//}
-	}
-	
-	#thumb-text {
-		fill: #D7504F;
-	}
-	.axis path,
-	.axis line {
-	  fill: none;
-	  stroke: #000;
-	  shape-rendering: crispEdges;
+        .tick text {
+            font-size: 14px;
+        }
+    }
+ 
+    #thumb-text {
+        fill: #D7504F;
+    }
+ 
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+        text.label {
+            fill: #fff;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+    }
 
-	text.label {
-		fill: #fff;
-	}
+    .arrow_box_container {
+        position: absolute;
+        top: 0;
+    }
 
-	.line {
-	  fill: none;
-	  stroke: steelblue;
-	  stroke-width: 3px;
-	}
+    .arrow_box {
+        font-size: 13px;
+        position: relative;
+        left: -50%;
+        background: #000000;
+        color: white;
+        display: inline-block;
+        padding: 3px 5px;
+        border-radius: 2px;
+    }
 
-	@media (max-width: 500px) {
-	}
+    .arrow_box:after {
+        top: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-color: rgba(0, 0, 0, 0);
+        border-top-color: #000000;
+        border-width: 4px;
+        margin-left: -4px;
+    }    
+}
+
+.d3slider.locked {
+	opacity: 0.5;
 }
