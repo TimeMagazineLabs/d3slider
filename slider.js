@@ -182,7 +182,7 @@
 	if (typeof module !== "undefined") {
 		module.exports = slider;
 	} else {
-		window.d3chart = slider;
+		window.d3slider = slider;
 	}
 
 	function s5() {

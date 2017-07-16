@@ -1,21 +1,33 @@
 {
-    "name": "d3slider",
-    "version": "0.0.1",
-    "description": "Wrapper for D3 slider axis",
-    "main": "index.js",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/TimeMagazine/d3slider.git"
-    },
-    "dependencies": {
-        "browserify": ">= 2.0.0"
-    },
-    "author": {
-        "name" : "Dave Johnson",
-        "email" : "david.johnson@time.com"
-    },
-    "browserify": {
-        "transform": ["node-lessify"]
-    },
-    "scripts" : {}
+  "name": "d3slider",
+  "version": "0.0.1",
+  "description": "Wrapper for D3 slider axis",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TimeMagazine/d3slider.git"
+  },
+  "author": "Dave Johnson <david.johnson@time.com>, Chris Wilson <chris.wilson@time.com>",
+  "browserify": {
+    "transform": [
+      "node-lessify"
+    ]
+  },
+  "scripts": {},
+  "bugs": {
+    "url": "https://github.com/TimeMagazine/d3slider/issues"
+  },
+  "homepage": "https://github.com/TimeMagazine/d3slider",
+  "keywords": [
+    "d3",
+    "slider",
+    "scale"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "browserify": "^14.4.0",
+    "d3": "^4.10.0",
+    "node-lessify": "0.1.5"
+  },
+  "devDependencies": {}
 }

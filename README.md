@@ -17,3 +17,6 @@ The current options are:
 
 
 Still experimental, more options to come. 
+
+## LICENSE
+MIT
