@@ -1,3 +1,3 @@
-var d3 = require('d3');
 require("./styles.less");
-module.exports = require("./slider.js");
+var slider = require("./slider.js");
+module.exports = slider;

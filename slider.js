@@ -1,10 +1,6 @@
-;(function(d3) {
-	// allow for use in Node/browserify or not
-	if (typeof module !== "undefined") {
-		var d3 = require("d3");
-	} else {
-		d3 = window.d3;
-	}
+;(function() {
+	var d3 = require('d3');
+	var images = require('./img/images.json');
 
 	var slider = function(container, opts) {
 		var value; // current value of slider at all times
@@ -40,6 +36,7 @@
 		opts.locked = opts.locked || false;
 		opts.color = opts.color || "#CC0000";
 		opts.snapToTick = opts.snapToTick || false;
+		opts.buttonColor = opts.buttonColor == "white"? "white" : "gray";
 
 		if (opts.textBox) {
 			opts.margin.top += 20;
@@ -52,19 +49,19 @@
 
 		value = opts.value;
 
-		if (opts.playButton){
-			var controls = element.append("div").attr("id", "control-panel")
-			controls.append("img")
-				.attr("id", "playButton")
-				.attr("class", "playButton")
-				.attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlearrow.png");
-		};
-
 		element.html("&nbsp;");
 
 		opts.width = opts.width || element.node().offsetWidth; //parseInt(element.style('width'), 10);
 
 		element.html("");
+
+		if (opts.playButton){
+			var controls = element.append("div").attr("id", "control-panel")
+			controls.append("img")
+				.attr("id", "playButton")
+				.attr("class", "playButton")
+				.attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
+		};
 
 		var svg = element.append('svg');
 
@@ -125,7 +122,6 @@
 				value = tick;
 				var snap = xScale(value);
 			} else {
-
 				// round the value to the nearest interval
 				value = Math.max(x.scale().domain()[0], Math.round(value / opts.interval) * opts.interval);
 				var snap = xScale(value);
@@ -142,14 +138,14 @@
 			// we only want to fire the callback if we're moving to a new tick
 			if (snap != previous_snap) {
 				d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
-				opts.onDrag && opts.onDrag(value);					
+				opts.onDrag && opts.onDrag(value, true);					
 				previous_snap = snap;
 			}
 
 			// cancel playing when manually moved
 			if (playing) {
 				playing = false;
-				d3.select(container + " #playButton").attr("src", "http://img.timeinc.net/time/wp/interactives/img/ui/circlearrow.png");
+				d3.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.stop_white : images.stop_gray);
 				clearTimeout(timer);
 				if (opts.onStop) {
 					opts.onStop();
@@ -158,8 +154,9 @@
 		}
 
 		// events
-		var drag = d3.drag()
-			.on("drag", clickedOrDragged);
+		var drag = d3.drag().on("drag", function(d) {
+			clickedOrDragged(d, true);
+		});
 
 		var thumb = axis.append("g")
 			.attr("class", "thumb")
@@ -239,11 +236,13 @@
 		var timer,
 			playing = false;
 
-		function set(value) {
+		function set(value, update) {
 			// bound input to domain
 			value = Math.max(Math.min(value, opts.domain[1]), opts.domain[0]);
 			d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
-			opts.onDrag && opts.onDrag(value);
+			if (update !== false) {
+				opts.onDrag && opts.onDrag(value, false);
+			}
 		}
 
 		function get() {
@@ -272,7 +271,7 @@
 			// loop around
 			if ((!value || value >= opts.domain[1]) && !opts.loop) {
 				playing = false;
-				svg.select(container + " #playButton").attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlearrow.png");
+				svg.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
 				clearTimeout(timer);
 
 				if (opts.onStop) {
@@ -285,7 +284,7 @@
 				value = opts.startValue;
 			}
 			d3.select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
-			opts.onDrag && opts.onDrag(value);			
+			opts.onDrag && opts.onDrag(value, false);			
 		}
 
 		d3.select(container + " #playButton").on("click", function() {
@@ -295,7 +294,7 @@
 
 			if (!playing) {
 				playing = true;
-				d3.select(container + " #playButton").attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlestop.png");
+				d3.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.stop_white : images.stop_gray);
 				advance();
 				timer = setInterval(function() {
 					advance();
@@ -307,7 +306,7 @@
 
 			} else {
 				playing = false;
-				d3.select(container + " #playButton").attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlearrow.png");
+				d3.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
 				clearTimeout(timer);
 
 				if (opts.onStop) {
@@ -318,7 +317,7 @@
 		});
 
 		element.on("click", function(d) {
-			clickedOrDragged(d);
+			clickedOrDragged(d, true);
 		});
 
 		return {
@@ -343,7 +342,7 @@
 			},
 			start: function(startValue) {
 				playing = true;
-				d3.select(container + " #playButton").attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlestop.png");
+				d3.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.stop_white : images.stop_gray);
 				if (startValue) {
 					set(startValue);					
 				}
@@ -358,10 +357,18 @@
 			},
 			stop: function() {
 				playing = false;
-				d3.select(container + " #playButton").attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlearrow.png");
+				d3.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
 				clearTimeout(timer);
 				if (opts.onStop) {
 					opts.onStop();
+				}
+			},
+			setButtonColor: function(color) {
+				opts.buttonColor = color == "white" ? "white" : "gray";
+				if (opts.playButton && playing) {
+					d3.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.stop_white : images.stop_gray);
+				} else {
+					d3.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
 				}
 			}
 		}
