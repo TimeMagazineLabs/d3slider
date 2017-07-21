@@ -28,7 +28,7 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 + onDrag: The callback that fires when the position of the slider changes.
 
 ## Extra parameters
-+ margin: `{ left: 10, right: 10, top: 40, bottom: 10 }`, e.g. Normally we'll guess the appropriate values based on your other params
++ margin: `{ left: 10, right: 10, top: 40, bottom: 10 }`, e.g. Normally we'll guess the appropriate values based on your other params. Careful messing with these values since you can cut off the thumbnail with small values.
 + speed: Milliseconds between stops on autoplay
 + locked: Whether the slider is manipulable
 + color: Hex color of thumb

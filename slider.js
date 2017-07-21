@@ -19,8 +19,15 @@
 		opts = opts || {};
 
 		// options
-		opts.margin = { left: opts.playButton? 60 : 25, right: 25, top: opts.playButton? 22 : 18  };
-		opts.width = opts.width || parseInt(element.style('width'), 10);
+		if (!opts.margin) {
+			opts.margin = {};
+		}
+
+		opts.margin.left = opts.margin.hasOwnProperty("left") ? opts.margin.left : (opts.playButton? 60 : 25);
+		opts.margin.top = opts.margin.hasOwnProperty("top") ? opts.margin.top : (opts.playButton? 22 : 18);
+		opts.margin.right = opts.margin.hasOwnProperty("right") ? opts.margin.right : 25;
+		// opts.margin.bottom = opts.margin.hasOwnProperty("bottom") ? opts.margin.bottom : 0;
+
 		opts.height = opts.height || 60;
 		opts.domain = opts.domain || [0, 10];
 		opts.interval = opts.interval || 1;
@@ -53,7 +60,15 @@
 				.attr("src", "http://time-static-shared.s3-website-us-east-1.amazonaws.com/interactives/death_penalty_map/img/circlearrow.png");
 		};
 
-		var svg = element.append('svg')
+		element.html("&nbsp;");
+
+		opts.width = opts.width || element.node().offsetWidth; //parseInt(element.style('width'), 10);
+
+		element.html("");
+
+		var svg = element.append('svg');
+
+		svg
 			.attr('width', opts.width)
 			.attr('height', opts.height)
 
@@ -307,13 +322,13 @@
 		});
 
 		return {
-			axis:    axis,
+			axis:	axis,
 			scale:   xScale,
 			height:  opts.height,
 			width:   opts.width,
 			advance: advance,
-			set:     set,
-			get:     get,
+			set:	 set,
+			get:	 get,
 			playing: function() {
 				return playing
 			},
