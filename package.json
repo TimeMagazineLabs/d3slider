@@ -2,21 +2,35 @@
   "name": "d3slider",
   "version": "0.0.2",
   "description": "Not a cheeseburger, just a nifty d3 slider.",
-  "main": "index.js",
+  "main": "slider.js",
   "dependencies": {
     "d3": "^4.10.0"
   },
-  "devDependencies": {
-    "browserify": "^14.4.0",
-    "node-lessify": "0.1.5"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "./node_modules/.bin/webpack --config webpack/dev.config.js",
+    "minify": "./node_modules/.bin/webpack --config webpack/production.config.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TimeMagazine/d3slider.git"
+  "devDependencies": {
+    "autoprefixer": "^7.1.2",
+    "babel-core": "6.26.0",
+    "babel-loader": "7.1.2",
+    "babel-plugin-add-module-exports": "0.2.1",
+    "babel-plugin-transform-decorators-legacy": "1.3.4",
+    "babel-plugin-transform-runtime": "6.23.0",
+    "babel-preset-es2015": "6.24.1",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "fs-extra": "4.0.1",
+    "less": "^2.7.2",
+    "less-loader": "4.0.5",
+    "postcss-loader": "^2.0.6",
+    "style-loader": "0.18.2",
+    "url-loader": "^0.5.9",
+    "webpack": "3.5.5",
+    "webpack-dev-server": "2.7.1"
   },
+  "type": "git",
+  "url": "git+https://github.com/TimeMagazine/d3slider.git",
   "keywords": [
     "slider",
     "d3"

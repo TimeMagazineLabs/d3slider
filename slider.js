@@ -26,24 +26,36 @@ var slider = function(container, opts) {
 		opts.margin = {};
 	}
 
-	opts.margin.left = opts.margin.hasOwnProperty("left") ? opts.margin.left : (opts.playButton? 60 : 25);
-	opts.margin.top = opts.margin.hasOwnProperty("top") ? opts.margin.top : (opts.playButton? 22 : 18);
-	opts.margin.right = opts.margin.hasOwnProperty("right") ? opts.margin.right : 25;
-	// opts.margin.bottom = opts.margin.hasOwnProperty("bottom") ? opts.margin.bottom : 0;
+	opts.margin.left = opts.margin.hasOwnProperty("left") ? opts.margin.left : 40;
+	opts.margin.top = opts.margin.hasOwnProperty("top") ? opts.margin.top : 0;
+	opts.margin.right = opts.margin.hasOwnProperty("right") ? opts.margin.right : 40;
+	opts.margin.bottom = opts.margin.hasOwnProperty("bottom") ? opts.margin.bottom : 0;
 
 	opts.height = opts.height || 60;
 	opts.domain = opts.domain || [0, 10];
 	opts.interval = opts.interval || 1;
 	opts.tickInterval = opts.tickInterval || 4;
 	opts.playInterval = opts.playInterval || 1;
-	opts.startValue = opts.startValue || opts.domain[0],
+	opts.startValue = opts.startValue || opts.domain[0];
 	opts.value  = opts.hasOwnProperty("value")? opts.value : opts.domain[0];
 	opts.speed = opts.speed || 1000;
 	opts.loop = typeof opts.loop == "undefined" ? true: opts.loop;
 	opts.locked = opts.locked || false;
 	opts.color = opts.color || "#CC0000";
 	opts.snapToTick = opts.snapToTick || false;
-	opts.buttonColor = opts.buttonColor == "white"? "white" : "gray";
+	opts.buttonColor = opts.buttonColor ? opts.buttonColor : "gray";
+	opts.size = opts.size || 12;
+
+	if (opts.buttonColor == "white") {
+		images.play = images.play_white;
+		images.stop = images.stop_white;
+	} else if (opts.buttonColor == "hollow") {
+		images.play = images.play_hollow;
+		images.stop = images.pause_hollow;
+	} else {
+		images.play = images.play_gray;
+		images.stop = images.stop_gray;
+	}
 
 	if (opts.textBox) {
 		opts.margin.top += 20;
@@ -59,6 +71,10 @@ var slider = function(container, opts) {
 	element.html("&nbsp;");
 
 	opts.width = opts.width || element.node().offsetWidth; //parseInt(element.style('width'), 10);
+	if (opts.playButton) {
+		opts.width -= 40;
+	}
+
 
 	element.html("");
 
@@ -67,8 +83,8 @@ var slider = function(container, opts) {
 		controls.append("img")
 			.attr("id", "playButton")
 			.attr("class", "playButton")
-			.attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
-	};
+			.attr("src", images.play);
+	}
 
 	var svg = element.append('svg');
 
@@ -93,7 +109,7 @@ var slider = function(container, opts) {
 	x.tickValues(ticks);
 	x.tickSize(12, 0);
 
-	x.tickFormat(function(d, i) { 
+	x.tickFormat(function(d, i) {
 		return opts.format? opts.format(d) : d;
 	});
 
@@ -135,21 +151,21 @@ var slider = function(container, opts) {
 		}
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value)) + "px");
-			element.select(".arrow_box").html(opts.format? opts.format(value) : value);
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}
 
 		// we only want to fire the callback if we're moving to a new tick
 		if (snap != previous_snap) {
 			select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
-			opts.onDrag && opts.onDrag(value, true);					
+			opts.onDrag && opts.onDrag(value, true);
 			previous_snap = snap;
 		}
 
 		// cancel playing when manually moved
 		if (playing) {
 			playing = false;
-			select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
+			select(container + " #playButton").attr("src", images.play);
 			clearTimeout(timer);
 			if (opts.onStop) {
 				opts.onStop();
@@ -169,7 +185,7 @@ var slider = function(container, opts) {
 		.call(dragged);
 
 	thumb.append("circle")
-		.attr("r", opts.size || 12)
+		.attr("r", opts.size)
 		.attr("cx", 0)
 		.attr("cy", 0)
 		.style("fill", opts.color);
@@ -178,11 +194,11 @@ var slider = function(container, opts) {
 		element
 			.append("div")
 			.attr("class", "arrow_box_container")
-			.style("left", (opts.margin.left + xScale(opts.value)) + "px")
-			.style("top", (13 - opts.size) + "px")
+			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 40 : 0)) + "px")
+			.style("bottom", (opts.height + 1) + "px")
 			.append("div")
 			.attr("class", "arrow_box")
-			.html(opts.format? opts.format(opts.value) : opts.value)
+			.html(opts.textBoxFormat ? opts.textBoxFormat(opts.value) : (opts.format? opts.format(opts.value) : opts.value));
 	}
 
 	//console.log(xScale, opts.value, xScale(opts.value));
@@ -262,14 +278,14 @@ var slider = function(container, opts) {
 		}
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value)) + "px");
-			element.select(".arrow_box").html(opts.format? opts.format(value) : value);
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}			
 
 		// loop around
 		if ((!value || value >= opts.domain[1]) && !opts.loop) {
 			playing = false;
-			svg.select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
+			svg.select(container + " #playButton").attr("src", images.play);
 			clearTimeout(timer);
 
 			if (opts.onStop) {
@@ -292,7 +308,7 @@ var slider = function(container, opts) {
 
 		if (!playing) {
 			playing = true;
-			select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.stop_white : images.stop_gray);
+			select(container + " #playButton").attr("src", images.stop);
 			advance();
 			timer = setInterval(function() {
 				advance();
@@ -304,7 +320,7 @@ var slider = function(container, opts) {
 
 		} else {
 			playing = false;
-			select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
+			select(container + " #playButton").attr("src", images.play);
 			clearTimeout(timer);
 
 			if (opts.onStop) {
@@ -341,7 +357,7 @@ var slider = function(container, opts) {
 		},
 		start: function(startValue) {
 			playing = true;
-			select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.stop_white : images.stop_gray);
+			select(container + " #playButton").attr("src", images.stop);
 			if (startValue) {
 				set(startValue);					
 			}
@@ -356,18 +372,28 @@ var slider = function(container, opts) {
 		},
 		stop: function() {
 			playing = false;
-			select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
+			select(container + " #playButton").attr("src", images.play);
 			clearTimeout(timer);
 			if (opts.onStop) {
 				opts.onStop();
 			}
 		},
 		setButtonColor: function(color) {
-			opts.buttonColor = color == "white" ? "white" : "gray";
-			if (opts.playButton && playing) {
-				select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.stop_white : images.stop_gray);
+			if (color == "white") {
+				images.play = images.play_white;
+				images.stop = images.stop_white;
+			} else if (color == "hollow") {
+				images.play = images.play_hollow;
+				images.stop = images.pause_hollow;
 			} else {
-				select(container + " #playButton").attr("src", opts.buttonColor == "white" ? images.play_white : images.play_gray);
+				images.play = images.play_gray;
+				images.stop = images.stop_gray;
+			}
+
+			if (opts.playButton && playing) {
+				select(container + " #playButton").attr("src", images.stop);
+			} else {
+				select(container + " #playButton").attr("src", images.play);
 			}
 		}
 	}
