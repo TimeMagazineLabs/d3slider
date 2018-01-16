@@ -72,7 +72,7 @@ var slider = function(container, opts) {
 
 	opts.width = opts.width || element.node().offsetWidth; //parseInt(element.style('width'), 10);
 	if (opts.playButton) {
-		opts.width -= 40;
+		opts.width -= 50;
 	}
 
 
@@ -151,7 +151,7 @@ var slider = function(container, opts) {
 		}
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 45 : 0)) + "px");
 			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}
 
@@ -200,7 +200,7 @@ var slider = function(container, opts) {
 		element
 			.append("div")
 			.attr("class", "arrow_box_container")
-			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 40 : 0)) + "px")
+			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 45 : 0)) + "px")
 			.style("bottom", (opts.height + 1) + "px")
 			.append("div")
 			.attr("class", "arrow_box")
@@ -300,7 +300,7 @@ var slider = function(container, opts) {
 		}
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 45 : 0)) + "px");
 			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}			
 
