@@ -162,6 +162,12 @@ var slider = function(container, opts) {
 			previous_snap = snap;
 		}
 
+		if (value && value >= opts.domain[1]) {
+			if (opts.onFinish) {
+				opts.onFinish();
+			}			
+		}
+
 		// cancel playing when manually moved
 		if (playing) {
 			playing = false;
@@ -260,6 +266,22 @@ var slider = function(container, opts) {
 
 	function advance() {
 		value += opts.playInterval;
+		if (value > opts.domain[1]) {
+			if (opts.loop) {
+				value = opts.domain[0] - opts.playInterval;
+				advance();
+				return;
+			} else {
+				playing = false;
+				select(container + " #playButton").attr("src", images.play);
+				clearTimeout(timer);
+
+				if (opts.onFinish) {
+					opts.onFinish();
+				}
+				return;
+			}
+		}
 
 		// if (opts.snapToTick && value <= ticks[ticks.length - 1]) {
 		if (opts.snapToTick) {
@@ -283,20 +305,21 @@ var slider = function(container, opts) {
 		}			
 
 		// loop around
-		if ((!value || value >= opts.domain[1]) && !opts.loop) {
-			playing = false;
-			svg.select(container + " #playButton").attr("src", images.play);
-			clearTimeout(timer);
+		// if ((!value || value >= opts.domain[1]) && !opts.loop) {
+		// 	playing = false;
+		// 	svg.select(container + " #playButton").attr("src", images.play);
+		// 	clearTimeout(timer);
 
-			if (opts.onStop) {
-				opts.onStop();
-			}
+		// 	if (opts.onStop) {
+		// 		opts.onStop();
+		// 	}
+		// 	return;
+		// }
 
-			return;
-		}
-		if (!value || value > opts.domain[1]) {
-			value = opts.startValue;
-		}
+		// if (!value || value > opts.domain[1]) {
+		// 	value = opts.startValue;
+		// }
+
 		select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 		opts.onDrag && opts.onDrag(value, false);			
 	}
@@ -305,6 +328,11 @@ var slider = function(container, opts) {
 		if (opts.locked) {
 			return;
 		}
+
+		if (value >= opts.domain[1]) {
+			value = opts.domain[0] - opts.playInterval;
+		}
+
 
 		if (!playing) {
 			playing = true;
