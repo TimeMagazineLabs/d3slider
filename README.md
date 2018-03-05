@@ -36,5 +36,9 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 + tickValues: Specific values for ticks
 + textBox: Whether to display the value in the box over the slider
 
+## Building
+browserify build.js > dist/d3slider.js --debug
+uglifyjs dist/d3slider.js > dist/d3slider.min.js
+
 ## LICENSE
 MIT
