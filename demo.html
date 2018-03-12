@@ -12,8 +12,10 @@ body {
     <body>
         <div id="slider_basic"></div>
         <div id="slider_autoplay"></div>
-        <script src="dist/d3slider.js"></script>
+        <script src="./dist/d3slider.js"></script>
         <script>
+var d3slider = d3slider.default;
+
 var basic = d3slider("#slider_basic", {
     domain: [0, 100],
     value: 50,
@@ -22,18 +24,20 @@ var basic = d3slider("#slider_basic", {
     tickInterval: 10,
     textBox: true,
     onDrag: function(v) {
-        console.log(v);
+        //console.log(v);
     }
 });
 
 var autoplay = d3slider("#slider_autoplay", {
 	playButton: true,
 	loop: true,
-	domain: [1776, 1960],
+	domain: [1776, 1945],
 	tickValues: [1776, 1800, 1828, 1865, 1912, 1945],
 	snapToTick: true,
 	color: "blue"
 });
+
+basic.set(30);
         </script>
     </body>
 </html>

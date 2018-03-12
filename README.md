@@ -1,7 +1,7 @@
 d3slider
 ========
 
-v0.0.2
+v0.0.5
 
 Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders and hello to a d3-powered, mobile friendly axis slider. By Dave Johnson and Chris Wilson for TIME Magazine and open-sourced under the MIT license.
 
@@ -41,8 +41,8 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 + textBox: Whether to display the value in the box over the slider
 
 ## Building
-browserify build.js > dist/d3slider.js --debug
-uglifyjs dist/d3slider.js > dist/d3slider.min.js
+	npm run build
+	// npm run minify // something wrong with Webpack config
 
 ## LICENSE
 MIT

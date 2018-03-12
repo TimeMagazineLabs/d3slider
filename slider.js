@@ -3,16 +3,17 @@ import {range} from "d3-array";
 import {scaleLinear} from "d3-scale";
 import {axisBottom} from "d3-axis";
 import {drag} from "d3-drag";
-var images = require('./img/images.json');
 
-require("./styles.less");
+require("./styles.scss");
 
-var slider = function(container, opts) {
+var images = require("./img/images.json");
+
+var d3slider = function(container, opts) {
 	var value; // current value of slider at all times
 
 	// build slider
 	if (!container) {
-		console.log("You must supply slider a container as the first argument");
+		console.log("You must supply slider a container as the first argument to d3slider.");
 		return null;
 	}
 
@@ -26,9 +27,9 @@ var slider = function(container, opts) {
 		opts.margin = {};
 	}
 
-	opts.margin.left = opts.margin.hasOwnProperty("left") ? opts.margin.left : 40;
-	opts.margin.top = opts.margin.hasOwnProperty("top") ? opts.margin.top : 0;
-	opts.margin.right = opts.margin.hasOwnProperty("right") ? opts.margin.right : 40;
+	opts.margin.left = opts.margin.hasOwnProperty("left") ? opts.margin.left : 20;
+	opts.margin.top = opts.margin.hasOwnProperty("top") ? opts.margin.top : 15;
+	opts.margin.right = opts.margin.hasOwnProperty("right") ? opts.margin.right : 20;
 	opts.margin.bottom = opts.margin.hasOwnProperty("bottom") ? opts.margin.bottom : 0;
 
 	opts.height = opts.height || 60;
@@ -71,10 +72,10 @@ var slider = function(container, opts) {
 	element.html("&nbsp;");
 
 	opts.width = opts.width || element.node().offsetWidth; //parseInt(element.style('width'), 10);
-	if (opts.playButton) {
-		opts.width -= 50;
-	}
 
+	if (opts.playButton) {
+		opts.width -= 40;
+	}
 
 	element.html("");
 
@@ -108,6 +109,7 @@ var slider = function(container, opts) {
 
 	x.tickValues(ticks);
 	x.tickSize(12, 0);
+	x.ticks(3);
 
 	x.tickFormat(function(d, i) {
 		return opts.format? opts.format(d) : d;
@@ -151,7 +153,7 @@ var slider = function(container, opts) {
 		}
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 45 : 0)) + "px");
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
 			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}
 
@@ -200,25 +202,34 @@ var slider = function(container, opts) {
 		element
 			.append("div")
 			.attr("class", "arrow_box_container")
-			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 45 : 0)) + "px")
-			.style("bottom", (opts.height + 1) + "px")
+			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 40 : 0)) + "px")
+			.style("bottom", (opts.height - 14) + "px")
 			.append("div")
 			.attr("class", "arrow_box")
 			.html(opts.textBoxFormat ? opts.textBoxFormat(opts.value) : (opts.format? opts.format(opts.value) : opts.value));
 	}
 
-	//console.log(xScale, opts.value, xScale(opts.value));
 	select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(opts.value) + ",0)");
 
 	function resize() {
 		opts.width = parseInt(element.style("width"), 10);
 
+		if (opts.playButton) {
+			opts.width -= 40;
+		}
+
 		// Update scale
 		xScale.range([0, opts.width - opts.margin.right - opts.margin.left]);
 		x.scale(xScale)
+		x.ticks(opts.width < 500 ? 3 : 10);
 		axis.call(x);
-		x.ticks(opts.width < 500 ? 5 : 10);
-		svg.attr("width", opts.width)
+		svg.attr("width", opts.width);
+		select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+
+		if (opts.textBox) {
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			// element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
+		}
 
 		// optional callback
 		if (opts.onResize) {
@@ -245,16 +256,22 @@ var slider = function(container, opts) {
 			}, dur || 250);
 		});
 	}
-	addResizeEvent(resize, 250);
+	addResizeEvent(resize, 100);
 
 	// play button controls
 	var timer,
 		playing = false;
 
-	function set(value, update) {
+	function set(v, update) {
 		// bound input to domain
-		value = Math.max(Math.min(value, opts.domain[1]), opts.domain[0]);
+		value = Math.max(Math.min(v, opts.domain[1]), opts.domain[0]);
 		select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+
+		if (opts.textBox) {
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
+		}
+
 		if (update !== false) {
 			opts.onDrag && opts.onDrag(value, false);
 		}
@@ -265,63 +282,60 @@ var slider = function(container, opts) {
 	}
 
 	function advance() {
-		value += opts.playInterval;
-		if (value > opts.domain[1]) {
-			if (opts.loop) {
-				value = opts.domain[0] - opts.playInterval;
-				advance();
-				return;
-			} else {
-				playing = false;
-				select(container + " #playButton").attr("src", images.play);
-				clearTimeout(timer);
+		value += opts.playInterval;		
 
-				if (opts.onFinish) {
-					opts.onFinish();
-				}
-				return;
-			}
-		}
-
-		// if (opts.snapToTick && value <= ticks[ticks.length - 1]) {
 		if (opts.snapToTick) {
 			var distance = Infinity,
 				tick = null;
 
 			for (var t = 0; t < ticks.length; t += 1) {
 				var d = Math.abs(value - ticks[t]);
-				if (d < distance && value < ticks[t]) {
+				if (d < distance && value <= ticks[t]) {
 					distance = d;
 					tick = ticks[t];
 				}
 			}
 
-			value = tick;				
+			if (!tick) {
+				value = ticks[0] - opts.playInterval;
+				advance();
+				return;
+			}
+
+			value = tick;
+		}
+
+		if (value >= opts.domain[1] && !opts.loop) {
+			playing = false;
+			select(container + " #playButton").attr("src", images.play);
+			clearTimeout(timer);
+			value = ticks[ticks.length - 1];
+
+			if (opts.textBox) {
+				element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+				element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
+			}
+
+			select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+			opts.onDrag && opts.onDrag(value, false);
+
+			if (opts.onFinish) {
+				opts.onFinish();
+			}
+			return;
+		} else if (value > opts.domain[1] && opts.loop) {
+			value = opts.domain[0] - opts.playInterval;
+			advance();
+			return;
 		}
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 45 : 0)) + "px");
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
 			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}			
 
-		// loop around
-		// if ((!value || value >= opts.domain[1]) && !opts.loop) {
-		// 	playing = false;
-		// 	svg.select(container + " #playButton").attr("src", images.play);
-		// 	clearTimeout(timer);
-
-		// 	if (opts.onStop) {
-		// 		opts.onStop();
-		// 	}
-		// 	return;
-		// }
-
-		// if (!value || value > opts.domain[1]) {
-		// 	value = opts.startValue;
-		// }
-
 		select(container + " > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
-		opts.onDrag && opts.onDrag(value, false);			
+		opts.onDrag && opts.onDrag(value, false);
 	}
 
 	select(container + " #playButton").on("click", function() {
@@ -345,7 +359,6 @@ var slider = function(container, opts) {
 			if (opts.onStart) {
 				opts.onStart();
 			}
-
 		} else {
 			playing = false;
 			select(container + " #playButton").attr("src", images.play);
@@ -377,7 +390,6 @@ var slider = function(container, opts) {
 		lock: 	 function() {
 			opts.locked = true;
 			element.classed("locked", true);
-			console.log("Locking", element);
 		},
 		unlock: function() {
 			opts.locked = false;
@@ -433,4 +445,4 @@ function s5() {
 		.substring(1);
 }
 
-export { slider as slider };
+export default d3slider;
