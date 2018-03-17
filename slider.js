@@ -445,4 +445,4 @@ function s5() {
 		.substring(1);
 }
 
-export default d3slider;
+export { d3slider };
