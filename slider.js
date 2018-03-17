@@ -28,7 +28,7 @@ var d3slider = function(container, opts) {
 	}
 
 	opts.margin.left = opts.margin.hasOwnProperty("left") ? opts.margin.left : 20;
-	opts.margin.top = opts.margin.hasOwnProperty("top") ? opts.margin.top : 15;
+	opts.margin.top = opts.margin.hasOwnProperty("top") ? opts.margin.top : 25;
 	opts.margin.right = opts.margin.hasOwnProperty("right") ? opts.margin.right : 20;
 	opts.margin.bottom = opts.margin.hasOwnProperty("bottom") ? opts.margin.bottom : 0;
 
@@ -203,7 +203,7 @@ var d3slider = function(container, opts) {
 			.append("div")
 			.attr("class", "arrow_box_container")
 			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 40 : 0)) + "px")
-			.style("bottom", (opts.height - 14) + "px")
+			.style("bottom", (opts.height - 24) + "px")
 			.append("div")
 			.attr("class", "arrow_box")
 			.html(opts.textBoxFormat ? opts.textBoxFormat(opts.value) : (opts.format? opts.format(opts.value) : opts.value));
