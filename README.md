@@ -3,7 +3,7 @@ d3slider
 
 v0.0.5
 
-Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders and hello to a d3-powered, mobile friendly axis slider. By Dave Johnson and Chris Wilson for TIME Magazine and open-sourced under the MIT license.
+Not a cheeseburger, just a nifty d3 slider. Say *adios* to buggy Bootstrap sliders and hello to a d3-powered, mobile friendly axis slider. By Dave Johnson and Chris Wilson for TIME Magazine and open-sourced under the MIT license.
 
 ### Initial options
 
@@ -19,7 +19,7 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 		}
 	});		
 
-`container` is a CSS selector or HTML element that will house the slider, which will create its own svg. It will clear any existing content in the selector, so pass an empty `div`.
+`container` is a CSS selector or HTML element that will house the slider, which will create its own svg. It will clear any existing content in the selector, so pass it an empty `div`.
 
 ## Main parameters
 + domain: The min and max values of the slides
@@ -41,8 +41,20 @@ Not a cheeseburger, just a nifty d3 slider. Say adios to buggy bootstrap sliders
 + textBox: Whether to display the value in the box over the slider
 
 ## Building
-	npm run build
-	// npm run minify // something wrong with Webpack config
+
+This module uses [Webpack](https://webpack.js.org/) to compile the source into the two files in the [`dist`](/dist) directory, which can be included in an HTML file the old-fashion way.
+
+        <script src="./dist/d3slider.min.js"></script>
+        <script>
+		var slider = d3slider.d3slider;
+		// initialize
+	</script>
+
+The files [`dist/d3slider.js`](dist/d3slider.js) (with comments and source maps) and [`dist/d3slider.min.js`](dist/d3slider.js) (minified, much smaller) are always up-to-date. If you make any modifications and need to recompile, just run `npm run build` and `npm run minify` from the root directory after running `npm install`.
+
+If you want to `require` or `import` the module and compile it as part of a larger project, you do **not** have to run `npm install`. Just include it in your Node environment:
+
+	const d3slider = require('d3slider').d3slider;	
 
 ## LICENSE
-MIT
+[MIT](LICENSE.md)

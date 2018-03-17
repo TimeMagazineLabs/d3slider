@@ -2,7 +2,7 @@ const webpack = require('webpack'); //to access built-in plugins
 const autoprefixer = require('autoprefixer')
 
 module.exports = {
-	entry: "./slider.js",
+	entry: [ "babel-polyfill", "./slider.js" ],
 	output: {
 		path: __dirname + '/../dist',
 		library: "d3slider",
