@@ -12,6 +12,7 @@ body {
     <body>
         <div id="slider_basic"></div>
         <div id="slider_autoplay"></div>
+        <div id="slider_float"></div>
         <script src="./dist/d3slider.js"></script>
         <script>
 var d3slider = d3slider.d3slider;
@@ -24,11 +25,12 @@ var basic = d3slider("#slider_basic", {
     tickInterval: 10,
     textBox: true,
     onDrag: function(v) {
-        //console.log(v);
+        console.log(v);
     }
 });
 
 var autoplay = d3slider("#slider_autoplay", {
+    interval: 1,
 	playButton: true,
 	loop: true,
 	domain: [1776, 1945],
@@ -37,7 +39,18 @@ var autoplay = d3slider("#slider_autoplay", {
 	color: "blue"
 });
 
-basic.set(30);
+var floating = d3slider("#slider_float", {
+    playButton: true,
+    loop: false,
+    playInterval: 0.1,
+    speed: 500,
+    domain: [0, 1],
+    tickValues: [0, 0.2, 0.4, 0.6, 0.8, 1],
+    color: "green"
+});
+
+basic.setValue(30);
+floating.setValue(0.5);
         </script>
     </body>
 </html>
