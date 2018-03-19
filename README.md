@@ -1,9 +1,8 @@
 d3slider
 ========
-
 Not a cheeseburger, just a nifty d3 slider. Say *adios* to buggy Bootstrap sliders and hello to a d3-powered, mobile friendly axis slider. By Dave Johnson and Chris Wilson for TIME Magazine and open-sourced under the MIT license.
 
-v0.0.6
+v0.0.6 [![Build Status](https://travis-ci.org/TimeMagazine/d3slider.svg?branch=master)](https://travis-ci.org/TimeMagazine/d3slider)
 
 ### Initial options
 
