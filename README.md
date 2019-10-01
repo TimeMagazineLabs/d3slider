@@ -2,11 +2,19 @@ d3slider
 ========
 Not a cheeseburger, just a nifty d3 slider. Say *adios* to buggy Bootstrap sliders and hello to a d3-powered, mobile friendly axis slider. By Dave Johnson and Chris Wilson for TIME Magazine and open-sourced under the MIT license.
 
-v0.0.6 [![Build Status](https://travis-ci.org/TimeMagazine/d3slider.svg?branch=master)](https://travis-ci.org/TimeMagazine/d3slider)
+v0.0.7 [![Build Status](https://travis-ci.org/TimeMagazine/d3slider.svg?branch=master)](https://travis-ci.org/TimeMagazine/d3slider)
+
+## Installation 
+
+	npm install d3charts
+
+## Usage
+
+	import slider from 'd3slider';
 
 ### Initial options
 
-	var mySlider = slider(container, {
+	let mySlider = slider(container, {
 		domain: [0, 100],
 		playButton: true,
 		interval: 1,
@@ -15,6 +23,7 @@ v0.0.6 [![Build Status](https://travis-ci.org/TimeMagazine/d3slider.svg?branch=m
 		loop: true,
 		onDrag: function(v){
 			console.log(v)
+			/* ... */
 		}
 	});		
 
@@ -57,6 +66,7 @@ v0.0.6 [![Build Status](https://travis-ci.org/TimeMagazine/d3slider.svg?branch=m
 + `lock()`: Freeze the slider
 + `unlock()`: Unfreeze the slider
 + `setButtonColor`: Change the color of the thumbnail. Only needed if you want to change according to the value or a behavior
++ `resize()`: Force the resize function 
 
 ## Building
 
@@ -64,7 +74,7 @@ This module uses [Webpack](https://webpack.js.org/) to compile the source into t
 
 	<script src="./dist/d3slider.min.js"></script>
 	<script>
-		var slider = d3slider.d3slider;
+		let slider = d3slider.d3slider;
 		// initialize
 	</script>
 
@@ -75,4 +85,5 @@ If you want to `require` or `import` the module and compile it as part of a larg
 	const d3slider = require('d3slider').d3slider;	
 
 ## LICENSE
+
 [MIT](LICENSE.md)

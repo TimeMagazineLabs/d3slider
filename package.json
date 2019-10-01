@@ -1,10 +1,14 @@
 {
   "name": "d3slider",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Not a cheeseburger, just a nifty d3 slider.",
   "main": "slider.js",
   "dependencies": {
-    "d3": "^4.13.0"
+    "d3-array": "^2.3.1",
+    "d3-axis": "^1.0.12",
+    "d3-drag": "^1.2.4",
+    "d3-scale": "^3.1.0",
+    "d3-selection": "^1.4.0"
   },
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack/development.config.js --mode development",

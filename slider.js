@@ -8,7 +8,7 @@ require("./styles.scss");
 
 var images = require("./img/images.json");
 
-var d3slider = function(container, opts) {
+export default function d3slider(container, opts) {
 	var value; // current value of slider at all times
 
 	// build slider
@@ -387,6 +387,7 @@ var d3slider = function(container, opts) {
 		domain:  opts.domain,
 		setValue: set,
 		getValue: get,
+		resize: resize,
 		playing: function() {
 			return playing
 		},		
@@ -447,5 +448,3 @@ function s5() {
 		.toString(16)
 		.substring(1);
 }
-
-export { d3slider };
