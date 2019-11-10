@@ -205,7 +205,7 @@ export default function d3slider(container, opts) {
 			.append("div")
 			.attr("class", "arrow_box_container")
 			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 40 : 0)) + "px")
-			.style("bottom", (opts.height - 24) + "px")
+			.style("top", (opts.margin.top - 40) + "px")
 			.append("div")
 			.attr("class", "arrow_box")
 			.html(opts.textBoxFormat ? opts.textBoxFormat(opts.value) : (opts.format? opts.format(opts.value) : opts.value));

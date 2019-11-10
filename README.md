@@ -2,7 +2,7 @@ d3slider
 ========
 Not a cheeseburger, just a nifty d3 slider. Say *adios* to buggy Bootstrap sliders and hello to a d3-powered, mobile friendly axis slider. By Dave Johnson and Chris Wilson for TIME Magazine and open-sourced under the MIT license.
 
-v0.0.7 [![Build Status](https://travis-ci.org/TimeMagazine/d3slider.svg?branch=master)](https://travis-ci.org/TimeMagazine/d3slider)
+v0.0.8 [![Build Status](https://travis-ci.org/TimeMagazine/d3slider.svg?branch=master)](https://travis-ci.org/TimeMagazine/d3slider)
 
 ## Installation 
 
@@ -74,8 +74,7 @@ This module uses [Webpack](https://webpack.js.org/) to compile the source into t
 
 	<script src="./dist/d3slider.min.js"></script>
 	<script>
-		let slider = d3slider.d3slider;
-		// initialize
+		let mySlider = d3slider({ ... })
 	</script>
 
 The files [`dist/d3slider.js`](dist/d3slider.js) (with comments and source maps) and [`dist/d3slider.min.js`](dist/d3slider.js) (minified, much smaller) are always up-to-date. If you make any modifications and need to recompile, just run `npm run build` and `npm run minify` from the root directory after running `npm install`.
