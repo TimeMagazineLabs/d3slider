@@ -22,7 +22,7 @@
         transition: opacity .5s;
     }
  
-    .slider-axis {
+   .slider-axis {
         font-size: 14px;
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -38,13 +38,6 @@
             stroke: #808080;
         }
 
-        .thumb path {
-            fill: #333;
-            stroke: #333;
-            stroke-width: 2px;
-            cursor: pointer;
-        }
-
         .tick line {
             stroke: #333;
         }
@@ -53,6 +46,19 @@
             font-size: 14px;
         }
     }
+
+    .thumb {
+    	line {
+            fill: #333;
+            stroke: #333;
+            stroke-width: 2px;
+            cursor: pointer;
+        }
+
+        image {
+        	cursor: pointer;
+        }
+    }    
  
     #thumb-text {
         fill: #D7504F;

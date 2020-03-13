@@ -35,6 +35,7 @@ export default function d3slider(container, opts) {
 	opts.height = opts.height || 60;
 	opts.domain = opts.domain || [0, 100];
 	opts.tickInterval = opts.tickInterval || 10;
+	opts.thumbnailStyle = opts.thumbnailStyle || "circle";
 
 	// default to 25 steps if not specified
 	opts.playInterval = opts.playInterval || (opts.interval ? opts.interval : (opts.domain[1] - opts.domain[0]) / 20);
@@ -95,14 +96,16 @@ export default function d3slider(container, opts) {
 		.attr('width', opts.width)
 		.attr('height', opts.height)
 
-	var axis = svg.append("g").attr("class", "slider-axis");
+	var data_layer = svg.append("g").attr("class", "data_layer").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
+	var axes_layer = svg.append("g").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
+	var thumb_layer = svg.append("g").attr("class", "thumbnail_layer").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 
+
+	var xAxis = axes_layer.append("g").attr("class", "slider-axis");
 	var xScale = scaleLinear().domain(opts.domain)
 
 	// Make adjustments to range and position of axis if play button
 	xScale.range([0, opts.width - opts.margin.right  - opts.margin.left]);
-
-	axis.attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 
 	// axis
 	var x = axisBottom().scale(xScale);
@@ -117,7 +120,7 @@ export default function d3slider(container, opts) {
 		return opts.format? opts.format(d) : d;
 	});
 
-	axis.call(x)
+	xAxis.call(x)
 
 	// see below
 	var previous_snap = null;
@@ -161,7 +164,7 @@ export default function d3slider(container, opts) {
 
 		// we only want to fire the callback if we're moving to a new tick
 		if (snap !== previous_snap) {
-			select(container + " div.d3slider > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+			select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 			opts.onDrag && opts.onDrag(value, true);
 			previous_snap = snap;
 		}
@@ -188,17 +191,33 @@ export default function d3slider(container, opts) {
 		clickedOrDragged(d, true);
 	});
 
-	var thumb = axis.append("g")
+	var thumb = thumb_layer.append("g")
 		.attr("class", "thumb")
 		.attr("id", "thumb")
 		.attr("transform", "translate(" + x.scale().range()[0] + ",0)")
 		.call(dragged);
 
-	thumb.append("circle")
-		.attr("r", opts.size)
-		.attr("cx", 0)
-		.attr("cy", 0)
-		.style("fill", opts.color);
+	if (opts.thumbnailStyle == "bar") {
+		thumb.append("line")
+			.attr("x1", 1)
+			.attr("x2", 1)
+			.attr("y1", 0)
+			.attr("y2", -opts.height + 40);
+
+		thumb.append("image")
+			.attr("href", images.handle)
+			.attr("width", 27)
+			.attr("height", 37)
+			.attr("x", -13)
+			.attr("y", -opts.height + 22);
+
+	} else {
+		thumb.append("circle")
+			.attr("r", opts.size)
+			.attr("cx", 0)
+			.attr("cy", 0)
+			.style("fill", opts.color);
+	}
 
 	if (opts.textBox) {
 		element
@@ -211,22 +230,22 @@ export default function d3slider(container, opts) {
 			.html(opts.textBoxFormat ? opts.textBoxFormat(opts.value) : (opts.format? opts.format(opts.value) : opts.value));
 	}
 
-	select(container + " div.d3slider > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(opts.value) + ",0)");
+	select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(opts.value) + ",0)");
 
 	function resize() {
-		opts.width = parseInt(element.style("width"), 10);
+		opts.width = element.node().clientWidth;
 
 		if (opts.playButton) {
-			opts.width -= 40;
+			opts.width -= 60;
 		}
 
 		// Update scale
 		xScale.range([0, opts.width - opts.margin.right - opts.margin.left]);
 		x.scale(xScale)
 		x.ticks(opts.width < 500 ? 3 : 10);
-		axis.call(x);
+		xAxis.call(x);
 		svg.attr("width", opts.width);
-		select(container + " div.d3slider > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+		select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 
 		if (opts.textBox) {
 			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
@@ -235,7 +254,7 @@ export default function d3slider(container, opts) {
 
 		// optional callback
 		if (opts.onResize) {
-			opts.onResize(width);
+			opts.onResize(opts.width);
 		}
 	}
 
@@ -267,7 +286,7 @@ export default function d3slider(container, opts) {
 	function set(v, update) {
 		// bound input to domain
 		value = Math.max(Math.min(v, opts.domain[1]), opts.domain[0]);
-		select(container + " div.d3slider > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+		select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 
 		if (opts.textBox) {
 			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
@@ -319,7 +338,7 @@ export default function d3slider(container, opts) {
 				element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 			}
 
-			select(container + " div.d3slider > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+			select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 			opts.onDrag && opts.onDrag(value, false);
 
 			if (opts.onFinish) {
@@ -337,7 +356,7 @@ export default function d3slider(container, opts) {
 			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}			
 
-		select(container + " div.d3slider > svg > .slider-axis > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+		select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 		opts.onDrag && opts.onDrag(value, false);
 	}
 
@@ -381,8 +400,10 @@ export default function d3slider(container, opts) {
 	return {
 		height:  opts.height,
 		width:   opts.width,
-		axis:	 axis,
+		axes_layer:	 axes_layer,
+		data_layer: data_layer,
 		scale:   xScale,
+		axis: x,
 		// advance: advance,
 		domain:  opts.domain,
 		setValue: set,
