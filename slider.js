@@ -1,8 +1,8 @@
-import {select, event, mouse} from "d3-selection";
-import {range} from "d3-array";
-import {scaleLinear} from "d3-scale";
-import {axisBottom} from "d3-axis";
-import {drag} from "d3-drag";
+import { select, event, mouse } from "d3-selection";
+import { range } from "d3-array";
+import { scaleLinear } from "d3-scale";
+import { axisBottom } from "d3-axis";
+import { drag } from "d3-drag";
 
 require("./styles.scss");
 
@@ -113,7 +113,7 @@ export default function d3slider(container, opts) {
 	var ticks = opts.tickValues || range(opts.domain[0], opts.domain[1] + 1, opts.tickInterval);
 
 	x.tickValues(ticks);
-	x.tickSize(12, 0);
+	x.tickSize(opts.hasOwnProperty("tickSize") ? opts.tickSize : 12, 0);
 	x.ticks(3);
 
 	x.tickFormat(function(d, i) {
@@ -126,7 +126,7 @@ export default function d3slider(container, opts) {
 	var previous_snap = null;
 
 	// fire when we've moved the thumbnail
-	function clickedOrDragged(d) {
+	function clickedOrDragged() {
 		if (opts.locked) {
 			return;
 		}
@@ -187,15 +187,14 @@ export default function d3slider(container, opts) {
 	}
 
 	// events
-	var dragged = drag().on("drag", function(d) {
-		clickedOrDragged(d, true);
+	let dragged = drag().on("drag", function() {
+		clickedOrDragged();
 	});
 
-	var thumb = thumb_layer.append("g")
+	let thumb = thumb_layer.append("g")
 		.attr("class", "thumb")
 		.attr("id", "thumb")
-		.attr("transform", "translate(" + x.scale().range()[0] + ",0)")
-		.call(dragged);
+		.attr("transform", "translate(" + x.scale().range()[0] + ",0)");
 
 	if (opts.thumbnailStyle == "bar") {
 		thumb.append("line")
@@ -231,6 +230,8 @@ export default function d3slider(container, opts) {
 	}
 
 	select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(opts.value) + ",0)");
+
+	thumb.call(dragged);
 
 	function resize() {
 		opts.width = element.node().clientWidth;
@@ -394,7 +395,7 @@ export default function d3slider(container, opts) {
 	});
 
 	element.on("click", function(d) {
-		clickedOrDragged(d, true);
+		clickedOrDragged();
 	});
 
 	return {
