@@ -8,11 +8,13 @@
     "d3-axis": "^1.0.12",
     "d3-drag": "^1.2.5",
     "d3-scale": "^3.2.1",
-    "d3-selection": "^1.4.2"
+    "d3-selection": "^1.4.2",
+    "elastic-svg": "^0.1.0"
   },
   "scripts": {
-    "build": "bundle-module --name=d3slider --entry=./slider.js",
-    "minify": "bundle-module --name=d3slider --entry=./slider.js --min"
+    "build": "bundle-module --entry=./slider.js --name=d3slider",
+    "minify": "bundle-module --entry=./slider.js --name=d3slider --min",
+    "test": "npm run build"
   },
   "type": "git",
   "url": "git+https://github.com/TimeMagazineLabs/d3slider.git",

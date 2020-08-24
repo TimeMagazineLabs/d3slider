@@ -3,13 +3,14 @@ import { range } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { axisBottom } from "d3-axis";
 import { drag } from "d3-drag";
+import elasticSVG from 'elastic-svg';
 
-require("./styles.scss");
+require("./slider.scss");
 
-var images = require("./img/images.json");
+const images = require("./img/images.json");
 
-export default function d3slider(container, opts) {
-	var value; // current value of slider at all times
+function d3slider(container, myOpts) {
+	let value, element; // current value of slider at all times
 
 	// build slider
 	if (!container) {
@@ -17,22 +18,41 @@ export default function d3slider(container, opts) {
 		return null;
 	}
 
-	var element = select(container).append("div");
+	element = select(container).append("div").classed("d3slider", true);
 
-	element.classed("d3slider", true);
-	opts = opts || {};
+	// var svg = element.append('svg');
+	// svg
+	// 	.attr('width', opts.width)
+	// 	.attr('height', opts.height)
 
-	// options
-	if (!opts.margin) {
-		opts.margin = {};
+	const opts = {
+		type: 'linear',
+		// domain: [0, 1],
+		// full_width: element.node().clientWidth,
+		// full_height: element.node().clientHeight,
+		margin: { left: 20, right: 20, top: 25, bottom: 0 }
+	};
+
+	// manual deep clone
+	if (myOpts.hasOwnProperty("margin")) {
+		Object.assign(opts.margin, myOpts.margin);
+		delete myOpts.margin;
 	}
 
-	opts.margin.left = opts.margin.hasOwnProperty("left") ? opts.margin.left : 20;
-	opts.margin.top = opts.margin.hasOwnProperty("top") ? opts.margin.top : 25;
-	opts.margin.right = opts.margin.hasOwnProperty("right") ? opts.margin.right : 20;
-	opts.margin.bottom = opts.margin.hasOwnProperty("bottom") ? opts.margin.bottom : 0;
+	Object.assign(opts, myOpts);
+
+	if (opts.playButton && myOpts.hasOwnProperty("margin") && myOpts.margin.hasOwnProperty("left")) {
+		opts.margin.left += 40;
+	}
 
 	opts.height = opts.height || 60;
+
+	let b = elasticSVG(container + " .d3slider", {
+		height: opts.height
+	});
+
+	let svg = select(b.svg);
+
 	opts.domain = opts.domain || [0, 100];
 	opts.tickInterval = opts.tickInterval || 10;
 	opts.thumbnailStyle = opts.thumbnailStyle || "circle";
@@ -71,16 +91,12 @@ export default function d3slider(container, opts) {
 
 	value = opts.value;
 
-	// but something in here so that we don't collapse to an 0x0 div
-	element.html("&nbsp;");
+	// put something in here so that we don't collapse to an 0x0 div
+	// element.html("&nbsp;");
 
 	opts.width = opts.width || element.node().offsetWidth; //parseInt(element.style('width'), 10);
 
-	if (opts.playButton) {
-		opts.width -= 40;
-	}
-
-	element.html("");
+	// element.html("");
 
 	if (opts.playButton){
 		var controls = element.append("div").attr("id", "control-panel")
@@ -90,22 +106,15 @@ export default function d3slider(container, opts) {
 			.attr("src", images.play);
 	}
 
-	var svg = element.append('svg');
-
-	svg
-		.attr('width', opts.width)
-		.attr('height', opts.height)
-
 	var data_layer = svg.append("g").attr("class", "data_layer").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 	var axes_layer = svg.append("g").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 	var thumb_layer = svg.append("g").attr("class", "thumbnail_layer").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 
-
 	var xAxis = axes_layer.append("g").attr("class", "slider-axis");
-	var xScale = scaleLinear().domain(opts.domain)
+	var xScale = scaleLinear().domain(opts.domain);
 
 	// Make adjustments to range and position of axis if play button
-	xScale.range([0, opts.width - opts.margin.right  - opts.margin.left]);
+	xScale.range([0, opts.width - opts.margin.right - opts.margin.left ]);
 
 	// axis
 	var x = axisBottom().scale(xScale);
@@ -117,7 +126,7 @@ export default function d3slider(container, opts) {
 	x.ticks(3);
 
 	x.tickFormat(function(d, i) {
-		return opts.format? opts.format(d) : d;
+		return opts.tickFormat? opts.tickFormat(d) : d;
 	});
 
 	xAxis.call(x)
@@ -131,8 +140,8 @@ export default function d3slider(container, opts) {
 			return;
 		}
 
-		var coords = mouse(svg.select(".domain").node()),
-			dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0]));
+		let coords = mouse(svg.select(".domain").node());
+		let dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0]));
 
 		value = x.scale().invert(dx);
 
@@ -150,7 +159,7 @@ export default function d3slider(container, opts) {
 			}
 
 			value = tick;
-			var snap = xScale(value);
+			var snap = xScale(value);			
 		} else {
 			// round the value to the nearest interval
 			value = opts.interval ? Math.max(opts.domain[0], Math.round(value / opts.interval) * opts.interval) : Math.max(opts.domain[0], value);
@@ -158,7 +167,7 @@ export default function d3slider(container, opts) {
 		}
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 0 : 0)) + "px");
 			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}
 
@@ -222,7 +231,7 @@ export default function d3slider(container, opts) {
 		element
 			.append("div")
 			.attr("class", "arrow_box_container")
-			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 40 : 0)) + "px")
+			.style("left", (opts.margin.left + xScale(opts.value) + (opts.playButton? 0 : 0)) + "px")
 			.style("top", (opts.margin.top - 40) + "px")
 			.append("div")
 			.attr("class", "arrow_box")
@@ -234,22 +243,19 @@ export default function d3slider(container, opts) {
 	thumb.call(dragged);
 
 	function resize() {
-		opts.width = element.node().clientWidth;
-
-		if (opts.playButton) {
-			opts.width -= 60;
-		}
+		opts.width = parseInt(svg.style('width'), 10) - opts.margin.right - opts.margin.left;
 
 		// Update scale
-		xScale.range([0, opts.width - opts.margin.right - opts.margin.left]);
+		xScale.range([0, opts.width]);
 		x.scale(xScale)
 		x.ticks(opts.width < 500 ? 3 : 10);
 		xAxis.call(x);
-		svg.attr("width", opts.width);
+
+		// svg.attr("width", opts.width);
 		select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 0 : 0)) + "px");
 			// element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}
 
@@ -259,8 +265,7 @@ export default function d3slider(container, opts) {
 		}
 	}
 
-	var resizeTimer,
-		uid = s5(); // needed for namespacing the resize event
+	let resizeTimer, uid = s5(); // needed for namespacing the resize event
 
 	// http://stackoverflow.com/questions/3339825/what-is-the-best-practise-to-not-to-override-other-bound-functions-to-window-onr
 	function addResizeEvent(func, dur) {
@@ -281,8 +286,7 @@ export default function d3slider(container, opts) {
 	addResizeEvent(resize, 100);
 
 	// play button controls
-	var timer,
-		playing = false;
+	let timer, playing = false;
 
 	function set(v, update) {
 		// bound input to domain
@@ -290,7 +294,7 @@ export default function d3slider(container, opts) {
 		select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 0 : 0)) + "px");
 			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}
 
@@ -335,7 +339,7 @@ export default function d3slider(container, opts) {
 			value = ticks[ticks.length - 1];
 
 			if (opts.textBox) {
-				element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+				element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 0 : 0)) + "px");
 				element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 			}
 
@@ -353,7 +357,7 @@ export default function d3slider(container, opts) {
 		}
 
 		if (opts.textBox) {
-			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 40 : 0)) + "px");
+			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 0 : 0)) + "px");
 			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 		}			
 
@@ -399,6 +403,7 @@ export default function d3slider(container, opts) {
 	});
 
 	return {
+		options: opts,
 		height:  opts.height,
 		width:   opts.width,
 		axes_layer:	 axes_layer,
@@ -470,3 +475,5 @@ function s5() {
 		.toString(16)
 		.substring(1);
 }
+
+export default d3slider
