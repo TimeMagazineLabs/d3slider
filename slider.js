@@ -162,7 +162,7 @@ function d3slider(container, myOpts) {
 			var snap = xScale(value);			
 		} else {
 			// round the value to the nearest interval
-			value = opts.interval ? Math.max(opts.domain[0], Math.round(value / opts.interval) * opts.interval) : Math.max(opts.domain[0], value);
+			value = opts.playInterval ? Math.max(opts.domain[0], Math.round(value / opts.playInterval) * opts.playInterval) : Math.max(opts.domain[0], value);
 			var snap = xScale(value);
 		}
 
@@ -336,14 +336,14 @@ function d3slider(container, myOpts) {
 			playing = false;
 			select(container + " #playButton").attr("src", images.play);
 			clearTimeout(timer);
-			value = ticks[ticks.length - 1];
+			// value = ticks[ticks.length - 1];
 
 			if (opts.textBox) {
 				element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 0 : 0)) + "px");
 				element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
 			}
 
-			select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
+			// select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 			opts.onDrag && opts.onDrag(value, false);
 
 			if (opts.onFinish) {
