@@ -1,6 +1,6 @@
 {
   "name": "d3slider",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Not a cheeseburger, just a nifty d3 slider.",
   "main": "slider.js",
   "dependencies": {
