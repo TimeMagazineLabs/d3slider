@@ -1,4 +1,4 @@
-import { select, event, mouse } from "d3-selection";
+import { select, event, mouse, pointer } from "d3-selection";
 import { range } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { axisBottom } from "d3-axis";
@@ -135,12 +135,20 @@ function d3slider(container, myOpts) {
 	var previous_snap = null;
 
 	// fire when we've moved the thumbnail
-	function clickedOrDragged() {
+	function clickedOrDragged(e) {
 		if (opts.locked) {
 			return;
 		}
 
-		let coords = mouse(svg.select(".domain").node());
+		let coords = pointer(e, svg.select(".domain").node());
+		// console.log(e);
+
+		if (!coords[0] && !coords[1]) {
+			// console.log("Falling back on event");
+			coords = [e.x, e.y];
+		};
+
+
 		let dx = Math.min(x.scale().range()[1], Math.max(x.scale().range()[0], coords[0]));
 
 		value = x.scale().invert(dx);
@@ -196,8 +204,8 @@ function d3slider(container, myOpts) {
 	}
 
 	// events
-	let dragged = drag().on("drag", function() {
-		clickedOrDragged();
+	let dragged = drag().on("drag", function(e, d) {
+		clickedOrDragged(e);
 	});
 
 	let thumb = thumb_layer.append("g")
@@ -336,7 +344,8 @@ function d3slider(container, myOpts) {
 			playing = false;
 			select(container + " #playButton").attr("src", images.play);
 			clearTimeout(timer);
-			// value = ticks[ticks.length - 1];
+
+			select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
 
 			if (opts.textBox) {
 				element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 0 : 0)) + "px");
@@ -365,7 +374,7 @@ function d3slider(container, myOpts) {
 		opts.onDrag && opts.onDrag(value, false);
 	}
 
-	select(container + " #playButton").on("click", function() {
+	select(container + " #playButton").on("click", function(e) {
 		if (opts.locked) {
 			return;
 		}
@@ -395,11 +404,12 @@ function d3slider(container, myOpts) {
 				opts.onStop();
 			}
 		}
-		event.stopPropagation(); // otherwise clicking the play button triggers the following handler and resets the value to the min
+		console.log(e);
+		e.stopPropagation(); // otherwise clicking the play button triggers the following handler and resets the value to the min
 	});
 
-	element.on("click", function(d) {
-		clickedOrDragged();
+	element.on("click", function(e, d) {
+		clickedOrDragged(e);
 	});
 
 	return {
