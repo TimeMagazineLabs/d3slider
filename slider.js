@@ -45,7 +45,6 @@ function d3slider(container, myOpts) {
 
 	if (opts.playButton) { // truthy
 		if (opts.playButton === true || opts.playButton === 'left') {
-			console.log("Adding to button margin");
 			opts.margin.left += BUTTON_MARGIN;
 		}
 	}
@@ -121,8 +120,6 @@ function d3slider(container, myOpts) {
 		}
 	}
 
-	console.log(opts.margin);
-
 	var data_layer = svg.append("g").attr("class", "data_layer").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 	var axes_layer = svg.append("g").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 	var thumb_layer = svg.append("g").attr("class", "thumbnail_layer").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
@@ -193,7 +190,7 @@ function d3slider(container, myOpts) {
 
 		if (opts.textBox) {
 			element.select(".arrow_box_container").style("left", (opts.margin.left + xScale(value) + (opts.playButton? 0 : 0)) + "px");
-			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.format? opts.format(value) : value));
+			element.select(".arrow_box").html(opts.textBoxFormat ? opts.textBoxFormat(value) : (opts.tickFormat? opts.tickFormat(value) : value));
 		}
 
 		// we only want to fire the callback if we're moving to a new tick
@@ -260,7 +257,7 @@ function d3slider(container, myOpts) {
 			.style("top", (opts.margin.top - 40) + "px")
 			.append("div")
 			.attr("class", "arrow_box")
-			.html(opts.textBoxFormat ? opts.textBoxFormat(opts.value) : (opts.format? opts.format(opts.value) : opts.value));
+			.html(opts.textBoxFormat ? opts.textBoxFormat(opts.value) : (opts.tickFormat? opts.tickFormat(opts.value) : opts.value));
 	}
 
 	select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(opts.value) + ",0)");
