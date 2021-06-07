@@ -5,9 +5,23 @@
     #control-panel {
         display: inline-block;
         vertical-align: top;
+        cursor: pointer;
+
         .playButton {
             width: 40px;
         }
+    }
+
+    #control-panel.left_button {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        margin-top: -25px;
+    }
+
+    #control-panel.centered_button {
+        display: block;
+        text-align: center;
     }
 
     svg {

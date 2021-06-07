@@ -41,8 +41,13 @@ function d3slider(container, myOpts) {
 
 	Object.assign(opts, myOpts);
 
-	if (opts.playButton && myOpts.hasOwnProperty("margin") && myOpts.margin.hasOwnProperty("left")) {
-		opts.margin.left += 40;
+	const BUTTON_MARGIN = 40;
+
+	if (opts.playButton) { // truthy
+		if (opts.playButton === true || opts.playButton === 'left') {
+			console.log("Adding to button margin");
+			opts.margin.left += BUTTON_MARGIN;
+		}
 	}
 
 	opts.height = opts.height || 60;
@@ -50,6 +55,9 @@ function d3slider(container, myOpts) {
 	let b = elasticSVG(container + " .d3slider", {
 		height: opts.height
 	});
+
+	// container for optional play button
+	let controls = element.append("div").attr("id", "control-panel")
 
 	let svg = select(b.svg);
 
@@ -70,14 +78,14 @@ function d3slider(container, myOpts) {
 	opts.size = opts.size || 12;
 
 	if (opts.buttonColor == "white") {
-		images.play = images.play_white;
-		images.stop = images.stop_white;
+		opts.play_image = images.play_white;
+		opts.stop_image = images.stop_white;
 	} else if (opts.buttonColor == "hollow") {
-		images.play = images.play_hollow;
-		images.stop = images.pause_hollow;
+		opts.play_image = images.play_hollow;
+		opts.stop_image = images.pause_hollow;
 	} else {
-		images.play = images.play_gray;
-		images.stop = images.stop_gray;
+		opts.play_image = images.play_gray;
+		opts.stop_image = images.stop_gray;
 	}
 
 	if (opts.textBox) {
@@ -99,12 +107,21 @@ function d3slider(container, myOpts) {
 	// element.html("");
 
 	if (opts.playButton){
-		var controls = element.append("div").attr("id", "control-panel")
 		controls.append("img")
 			.attr("id", "playButton")
 			.attr("class", "playButton")
-			.attr("src", images.play);
+			.attr("src", opts.play_image);
+
+		if (opts.playButton === true || opts.playButton === 'left') {
+			controls.classed("left_button", true);
+		} else if (typeof opts.playButton === 'string') {
+			if (/center|middle/.test(opts.playButton)) {
+				controls.classed("centered_button", true);
+			}			
+		}
 	}
+
+	console.log(opts.margin);
 
 	var data_layer = svg.append("g").attr("class", "data_layer").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
 	var axes_layer = svg.append("g").attr("transform", "translate(" + opts.margin.left + "," + opts.margin.top + ")");
@@ -195,7 +212,7 @@ function d3slider(container, myOpts) {
 		// cancel playing when manually moved
 		if (playing) {
 			playing = false;
-			select(container + " #playButton").attr("src", images.play);
+			select(container + " #playButton").attr("src", opts.play_image);
 			clearTimeout(timer);
 			if (opts.onStop) {
 				opts.onStop();
@@ -342,7 +359,7 @@ function d3slider(container, myOpts) {
 
 		if (value == opts.domain[1] && !opts.loop) {
 			playing = false;
-			select(container + " #playButton").attr("src", images.play);
+			select(container + " #playButton").attr("src", opts.play_image);
 			clearTimeout(timer);
 
 			select(container + " div.d3slider > svg > .thumbnail_layer > #thumb").attr("transform", "translate(" + xScale(value) + ",0)");
@@ -383,10 +400,9 @@ function d3slider(container, myOpts) {
 			value = opts.domain[0] - opts.playInterval;
 		}
 
-
 		if (!playing) {
 			playing = true;
-			select(container + " #playButton").attr("src", images.stop);
+			select(container + " #playButton").attr("src", opts.stop_image);
 			advance();
 			timer = setInterval(function() {
 				advance();
@@ -397,14 +413,14 @@ function d3slider(container, myOpts) {
 			}
 		} else {
 			playing = false;
-			select(container + " #playButton").attr("src", images.play);
+			select(container + " #playButton").attr("src", opts.play_image);
 			clearTimeout(timer);
 
 			if (opts.onStop) {
 				opts.onStop();
 			}
 		}
-		console.log(e);
+
 		e.stopPropagation(); // otherwise clicking the play button triggers the following handler and resets the value to the min
 	});
 

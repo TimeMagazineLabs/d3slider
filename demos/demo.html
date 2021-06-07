@@ -4,15 +4,41 @@
         <title>D3 Slider Demo</title>
         <style>
 body {
-    max-width: 600px;
     font-family: Arial, serif;
 }
+
+#slider_demos {
+    max-width: 600px;    
+}
+
+#slider_demos > div {
+    margin: 0 0 20px 0;
+    border: 1px solid #CCC;
+
+}
+
+#slider_centered {
+    background-color: #404040;
+}
+
+#slider_centered text {
+    fill: white;
+}
+
+#slider_centered line {
+    stroke: white;
+}
+
+
         </style>
     </head>
     <body>
-        <div id="slider_basic"></div>
-        <div id="slider_autoplay"></div>
-        <div id="slider_float"></div>
+        <div id="slider_demos">
+            <div id="slider_basic"></div>
+            <div id="slider_autoplay"></div>
+            <div id="slider_float"></div>
+            <div id="slider_centered"></div>
+        </div>
         <script src="../dist/d3slider.js"></script>
         <script>
 var basic = d3slider("#slider_basic", {
@@ -38,7 +64,7 @@ var autoplay = d3slider("#slider_autoplay", {
 });
 
 var floating = d3slider("#slider_float", {
-    playButton: true,
+    playButton: "bottom",
     loop: false,
     playInterval: 0.1,
     speed: 500,
@@ -47,8 +73,20 @@ var floating = d3slider("#slider_float", {
     color: "green"
 });
 
+var centered = d3slider("#slider_centered", {
+    playButton: "centered",
+    buttonColor: "hollow",
+    loop: false,
+    playInterval: 0.1,
+    speed: 500,
+    domain: [0, 1],
+    tickValues: [0, 0.2, 0.4, 0.6, 0.8, 1],
+    color: "#FFFF33"
+});
+
 basic.setValue(30);
 floating.setValue(0.5);
+
         </script>
     </body>
 </html>

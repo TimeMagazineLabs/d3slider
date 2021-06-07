@@ -49,6 +49,7 @@ v0.1.1 [![Build Status](https://travis-ci.org/TimeMagazine/d3slider.svg?branch=m
 + `size`: The radius of the thumbnail. Default is 12. Don't make it too small or it will be hard to catch on mobile.
 + `color`: Hex color of thumb
 + `margin`: `{ left: 25, right: 20, top: 20, bottom: 0 }`, e.g. Normally we'll guess the appropriate values based on your other params. Careful messing with this since you can cut off the thumbnail with small values.
++ `buttonColor`: Options are 'gray', 'white', 'hollow'
 
 ## Properties
 + `height`: The current height
