@@ -1,18 +1,19 @@
 {
   "name": "d3slider",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Not a cheeseburger, just a nifty d3 slider.",
   "main": "slider.js",
   "dependencies": {
-    "d3-array": "^2.8.0",
-    "d3-axis": "^2.0.0",
+    "d3-array": "^3.0.1",
+    "d3-axis": "^2.1.0",
     "d3-drag": "^2.0.0",
-    "d3-scale": "^3.2.3",
+    "d3-scale": "^4.0.0",
     "d3-selection": "^2.0.0",
     "elastic-svg": "^0.1.0"
   },
   "scripts": {
     "build": "bundle-module --entry=./slider.js --name=d3slider",
+    "watch": "bundle-module --entry=./slider.js --name=d3slider --watch",
     "minify": "bundle-module --entry=./slider.js --name=d3slider --min",
     "test": "npm run build"
   },
